@@ -20,4 +20,5 @@ Darvis\Lemmings\Providers\DarvisLemmingsProvider::class,
 ## Use as
 Just use /lemmings after your url
 
-https://example.com/lemmings
+Like this: 
+https://darvis.nl/lemmings
