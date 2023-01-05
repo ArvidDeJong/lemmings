@@ -16,12 +16,10 @@
             "Darvis\\Lemmings\\": "src/"
         }
     },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "Providers\\DarvisLemmingsProvider"
-            ]
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/darviscommerce/lemmings"
         }
-    },
-    "minimum-stability": "dev"
+    ]
 }
