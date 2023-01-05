@@ -1,0 +1,27 @@
+{
+    "name": "darvis/lemmings",
+    "description": "Darvis lemmings easter egg",
+    "homepage": "http://darvis/",
+    "keywords": ["darvis", "laravel", "easter-egg", "lemmings"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Arvid de Jong",
+            "email": "arvid@darvis.nl",
+            "homepage": "https://darvis.nl/"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Darvis\\Lemmings\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Providers\\DarvisLemmingsProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev"
+}
