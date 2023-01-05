@@ -3,7 +3,6 @@
 namespace Darvis\Lemmings\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Foundation\Console\AboutCommand;
 
 class DarvisLemmingsProvider extends ServiceProvider
 {
@@ -16,12 +15,8 @@ class DarvisLemmingsProvider extends ServiceProvider
      */
     public function boot()
     {
-
-
         $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'darvis-lemmings');
-
-        // \Livewire\Livewire::component('lemmings', \Darvis\Lemmings\App\Http\Livewire\Lemmings::class);
     }
 
     /**
