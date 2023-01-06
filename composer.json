@@ -23,7 +23,7 @@
         }
     ],
     "require": {
-        "laravel/framework": "^5.4"
+        "laravel/framework": ">=5.4"
     },
     "extra": {
         "laravel": {
