@@ -1,6 +1,6 @@
 <?php
 
-namespace Darvis\Lemmings\Providers;
+namespace Darvis\Lemmings\Larave\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
