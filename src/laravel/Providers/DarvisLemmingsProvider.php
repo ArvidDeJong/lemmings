@@ -1,6 +1,6 @@
 <?php
 
-namespace Darvis\Lemmings\Larave\Providers;
+namespace Darvis\Lemmings\Laravel\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
