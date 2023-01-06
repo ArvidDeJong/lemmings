@@ -8,15 +8,6 @@ By using the page as an easter egg, it is also not harmful to search engines.
 composer require darvis/lemmings
 ```
 
-## Add to laravel config/app.php
-```
-/*
-* Package Service Providers...
-*/
-.....
-Darvis\Lemmings\Providers\DarvisLemmingsProvider::class,
-```
-
 ## Use as
 Just use /lemmings after your url
 
