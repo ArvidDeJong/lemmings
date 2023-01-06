@@ -24,5 +24,12 @@
     ],
     "require": {
         "laravel/framework": "^5.4"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Darvis\\Lemmings\\DarvisLemmingsProvider"
+            ]
+        }
     }
 }
