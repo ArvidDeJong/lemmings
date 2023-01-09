@@ -28,7 +28,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Darvis\\Lemmings\\App\\Providers\\DarvisLemmingsProvider"
+                "Darvis\\Lemmings\\Laravel\\Providers\\DarvisLemmingsProvider"
             ]
         }
     }
