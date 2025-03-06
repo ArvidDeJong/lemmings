@@ -1,15 +1,53 @@
 # Laravel Lemmings Easter Egg
-I use the lemmings page to prove that I worked on a website.
 
-By using the page as an easter egg, it is also not harmful to search engines.
+Een leuke easter egg voor je Laravel website die bewijst dat jij de ontwikkelaar bent.
 
-## Install with composer
-```
+## Installatie
+
+Je kunt deze package installeren via Composer:
+
+```bash
 composer require darvis/lemmings
 ```
 
-## Use as
-Just use /lemmings after your url
+### Vereisten
+- PHP ^8.2
+- Laravel ^11.44.1
 
-Like this: 
-https://darvis.nl/lemmings
+## Configuratie
+
+De package werkt automatisch met Laravel's auto-discovery. Na installatie is er geen verdere configuratie nodig.
+
+## Gebruik
+
+Voeg simpelweg `/lemmings` toe aan je website URL:
+
+```
+https://jouw-website.nl/lemmings
+```
+
+## Features
+- Automatische route registratie
+- Zero-configuration setup
+- SEO-vriendelijk (verborgen voor zoekmachines)
+- Werkt met Livewire 3
+- Compatibel met FluxUI
+
+## Testing
+
+```bash
+composer test
+```
+
+## Changelog
+
+Bekijk [CHANGELOG](CHANGELOG.md) voor alle wijzigingen.
+
+## Credits
+
+- [Arvid de Jong](https://darvis.nl)
+- [Alle contributors](../../contributors)
+
+## License
+
+The MIT License (MIT). Bekijk [License File](LICENSE.md) voor meer informatie.

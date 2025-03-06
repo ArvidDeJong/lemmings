@@ -6,8 +6,6 @@ use Illuminate\Support\ServiceProvider;
 
 class DarvisLemmingsProvider extends ServiceProvider
 {
-
-
     /**
      * Bootstrap any package services.
      *
@@ -24,8 +22,5 @@ class DarvisLemmingsProvider extends ServiceProvider
      *
      * @return void
      */
-    public function register()
-    {
-
-    }
+    public function register() {}
 }

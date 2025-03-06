@@ -1,1 +1,41 @@
+# OS generated files
 .DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE and Editor folders
+/.idea
+/.vscode
+*.sublime-project
+*.sublime-workspace
+/.phpstorm.meta.php
+/_ide_helper.php
+
+# Package development
+/vendor
+/node_modules
+composer.lock
+package-lock.json
+yarn.lock
+.phpunit.result.cache
+.phpunit.cache
+.php-cs-fixer.cache
+.php_cs.cache
+
+# Environment files
+.env
+.env.backup
+.env.*.local
+
+# Laravel specific
+/public/storage
+/storage/*.key
+/.vapor
+/.fleet
+.phpunit.result.cache
+
+# Build files
+/build
+/dist
+/coverage
+*.log
