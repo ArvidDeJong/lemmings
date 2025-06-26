@@ -11,6 +11,7 @@ Alle belangrijke wijzigingen aan de Lemmings package worden in dit bestand gedoc
 ### Verwijderd
 
 -   Tests verwijderd om compatibiliteit te verbeteren
+-   Laravel Pint verwijderd om afhankelijkheden te minimaliseren
 
 ## [1.1.0] - 2024-XX-XX
 
