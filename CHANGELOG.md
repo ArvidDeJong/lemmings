@@ -8,6 +8,10 @@ Alle belangrijke wijzigingen aan de Lemmings package worden in dit bestand gedoc
 
 -   Uitgebreide Laravel compatibiliteit naar Laravel 11 en 12 (`^11.0|^12.0`)
 
+### Verwijderd
+
+-   Tests verwijderd om compatibiliteit te verbeteren
+
 ## [1.1.0] - 2024-XX-XX
 
 ### Toegevoegd

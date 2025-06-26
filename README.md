@@ -34,12 +34,6 @@ https://jouw-website.nl/lemmings
 - Compatibel met FluxUI
 - Ondersteuning voor Laravel 12
 
-## Testing
-
-```bash
-composer test
-```
-
 ## Changelog
 
 Bekijk [CHANGELOG](CHANGELOG.md) voor alle wijzigingen.
