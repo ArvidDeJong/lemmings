@@ -12,7 +12,7 @@ composer require darvis/lemmings
 
 ### Vereisten
 - PHP ^8.2
-- Laravel ^11.44.1
+- Laravel ^11.44.1 of ^12.0
 
 ## Configuratie
 
@@ -32,6 +32,7 @@ https://jouw-website.nl/lemmings
 - SEO-vriendelijk (verborgen voor zoekmachines)
 - Werkt met Livewire 3
 - Compatibel met FluxUI
+- Ondersteuning voor Laravel 12
 
 ## Testing
 
