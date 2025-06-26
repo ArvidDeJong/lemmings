@@ -2,16 +2,18 @@
 
 Alle belangrijke wijzigingen aan de Lemmings package worden in dit bestand gedocumenteerd.
 
-## [1.2.0] - 2025-06-26
-
-### Gewijzigd
-
--   Uitgebreide Laravel compatibiliteit naar Laravel 11 en 12 (`^11.0|^12.0`)
+## [1.3.0] - 2025-06-26
 
 ### Verwijderd
 
 -   Tests verwijderd om compatibiliteit te verbeteren
 -   Laravel Pint verwijderd om afhankelijkheden te minimaliseren
+
+## [1.2.0] - 2025-06-26
+
+### Gewijzigd
+
+-   Uitgebreide Laravel compatibiliteit naar Laravel 11 en 12 (`^11.0|^12.0`)
 
 ## [1.1.0] - 2024-XX-XX
 
