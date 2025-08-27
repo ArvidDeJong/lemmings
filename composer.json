@@ -1,45 +1,48 @@
 {
-    "name": "darvis/lemmings",
-    "description": "Darvis lemmings easter egg",
-    "version": "1.3.0",
-    "homepage": "http://darvis.nl",
-    "keywords": ["darvis", "laravel", "easter-egg", "lemmings"],
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Arvid de Jong",
-            "email": "arvid@darvis.nl",
-            "homepage": "https://darvis.nl"
-        }
-    ],
-    "autoload": {
-        "psr-4": {
-            "Darvis\\Lemmings\\": "src/"
-        }
-    },
-
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/darviscommerce/lemmings"
-        }
-    ],
-    "require": {
-        "php": "^8.2",
-        "laravel/framework": "^11.0|^12.0"
-    },
-    "require-dev": {},
-    "scripts": {},
-    "extra": {
-        "laravel": {
-            "providers": [
-                "Darvis\\Lemmings\\Laravel\\Providers\\DarvisLemmingsProvider"
-            ]
-        }
-    },
-    "config": {
-        "sort-packages": true
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true
+  "name": "darvis/lemmings",
+  "description": "Darvis lemmings easter egg",
+  "homepage": "http://darvis.nl",
+  "keywords": [
+    "darvis",
+    "laravel",
+    "easter-egg",
+    "lemmings"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Arvid de Jong",
+      "email": "arvid@darvis.nl",
+      "homepage": "https://darvis.nl"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Darvis\\Lemmings\\": "src/"
+    }
+  },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/darviscommerce/lemmings"
+    }
+  ],
+  "require": {
+    "php": "^8.2",
+    "laravel/framework": "^11.0|^12.0"
+  },
+  "require-dev": {},
+  "scripts": {},
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Darvis\\Lemmings\\Laravel\\Providers\\DarvisLemmingsProvider"
+      ]
+    }
+  },
+  "config": {
+    "sort-packages": true
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
 }
