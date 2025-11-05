@@ -2,7 +2,7 @@
 
 Alle belangrijke wijzigingen aan de Lemmings package worden in dit bestand gedocumenteerd.
 
-## [1.4.0] - 2025-08-27
+## [1.4.1] - 2025-11-05
 
 ### Verwijderd
 
