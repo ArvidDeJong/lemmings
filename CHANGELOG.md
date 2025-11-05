@@ -2,6 +2,16 @@
 
 Alle belangrijke wijzigingen aan de Lemmings package worden in dit bestand gedocumenteerd.
 
+## [1.4.0] - 2025-08-27
+
+### Verwijderd
+
+-   Version veld verwijderd uit composer.json voor betere package management
+
+### Gewijzigd
+
+-   Code formatting verbeterd in composer.json
+
 ## [1.3.0] - 2025-06-26
 
 ### Verwijderd
