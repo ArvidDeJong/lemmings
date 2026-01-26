@@ -1,7 +1,7 @@
 {
   "name": "darvis/lemmings",
-  "description": "Darvis lemmings easter egg",
-  "homepage": "http://darvis.nl",
+  "description": "A fun Lemmings easter egg for Laravel applications to prove developer ownership",
+  "homepage": "https://darvis.nl",
   "keywords": [
     "darvis",
     "laravel",
@@ -12,7 +12,7 @@
   "authors": [
     {
       "name": "Arvid de Jong",
-      "email": "arvid@darvis.nl",
+      "email": "info@arvid.nl",
       "homepage": "https://darvis.nl"
     }
   ],
@@ -21,18 +21,10 @@
       "Darvis\\Lemmings\\": "src/"
     }
   },
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/darviscommerce/lemmings"
-    }
-  ],
   "require": {
     "php": "^8.2",
     "laravel/framework": "^11.0|^12.0"
   },
-  "require-dev": {},
-  "scripts": {},
   "extra": {
     "laravel": {
       "providers": [
@@ -43,6 +35,6 @@
   "config": {
     "sort-packages": true
   },
-  "minimum-stability": "dev",
+  "minimum-stability": "stable",
   "prefer-stable": true
 }

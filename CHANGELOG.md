@@ -1,58 +1,72 @@
 # Changelog
 
-Alle belangrijke wijzigingen aan de Lemmings package worden in dit bestand gedocumenteerd.
+All notable changes to the Lemmings package will be documented in this file.
+
+## [1.5.0] - 2026-01-26
+
+### Added
+
+-   Configuration file for customizable URL and route path
+-   Config publishing via `php artisan vendor:publish --tag=lemmings-config`
+-   Named route `lemmings` for easier referencing
+-   Environment variable support (`LEMMINGS_URL`, `LEMMINGS_ROUTE`)
+
+### Changed
+
+-   Documentation translated to English
+-   Improved ServiceProvider with config merging
 
 ## [1.4.1] - 2025-11-05
 
-### Verwijderd
+### Removed
 
--   Version veld verwijderd uit composer.json voor betere package management
+-   Version field removed from composer.json for better package management
 
-### Gewijzigd
+### Changed
 
--   Code formatting verbeterd in composer.json
+-   Improved code formatting in composer.json
 
 ## [1.3.0] - 2025-06-26
 
-### Verwijderd
+### Removed
 
--   Tests verwijderd om compatibiliteit te verbeteren
--   Laravel Pint verwijderd om afhankelijkheden te minimaliseren
+-   Tests removed to improve compatibility
+-   Laravel Pint removed to minimize dependencies
 
 ## [1.2.0] - 2025-06-26
 
-### Gewijzigd
+### Changed
 
--   Uitgebreide Laravel compatibiliteit naar Laravel 11 en 12 (`^11.0|^12.0`)
+-   Extended Laravel compatibility to Laravel 11 and 12 (`^11.0|^12.0`)
 
 ## [1.1.0] - 2024-XX-XX
 
-### Toegevoegd
+### Added
 
--   [Hier stonden eerdere wijzigingen voor versie 1.1.0]
+-   [Previous changes for version 1.1.0]
 
 ## [1.0.1] - 2025-03-06
 
-### Toegevoegd
+### Added
 
--   Ondersteuning voor Laravel 11
--   Compatibiliteit met Livewire 3
--   FluxUI integratie
+-   Support for Laravel 11
+-   Compatibility with Livewire 3
+-   FluxUI integration
 
-### Gewijzigd
+### Changed
 
--   Minimum PHP versie verhoogd naar 8.2
--   PHPUnit upgrade naar versie 11
--   Verbeterde documentatie
+-   Minimum PHP version raised to 8.2
+-   PHPUnit upgrade to version 11
+-   Improved documentation
 
-### Verwijderd
+### Removed
 
--   Ondersteuning voor Laravel < 11
+-   Support for Laravel < 11
 
 ## [1.0.0] - 2024-01-01
 
-### Toegevoegd
+### Added
 
--   Initiële release
--   Basis Lemmings easter egg functionaliteit
--   Laravel auto-discovery ondersteuning
+-   Initial release
+-   Basic Lemmings easter egg functionality
+-   Laravel auto-discovery support

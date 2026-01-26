@@ -1,48 +1,72 @@
 # Laravel Lemmings Easter Egg
 
-Een leuke easter egg voor je Laravel website die bewijst dat jij de ontwikkelaar bent.
+A fun easter egg for your Laravel website that proves you are the developer.
 
-## Installatie
+## Installation
 
-Je kunt deze package installeren via Composer:
+You can install this package via Composer:
 
 ```bash
 composer require darvis/lemmings
 ```
 
-### Vereisten
+### Requirements
 - PHP ^8.2
-- Laravel ^11.44.1 of ^12.0
+- Laravel ^11.0 or ^12.0
 
-## Configuratie
+## Configuration
 
-De package werkt automatisch met Laravel's auto-discovery. Na installatie is er geen verdere configuratie nodig.
+The package works automatically with Laravel's auto-discovery. After installation, no further configuration is required.
 
-## Gebruik
+Optionally, you can publish the configuration file:
 
-Voeg simpelweg `/lemmings` toe aan je website URL:
+```bash
+php artisan vendor:publish --tag=lemmings-config
+```
+
+This will create a `config/lemmings.php` file where you can customize:
+
+```php
+return [
+    // The URL the easter egg links to
+    'url' => env('LEMMINGS_URL', 'https://lemmings.darvis.nl'),
+
+    // The route path for the easter egg
+    'route' => env('LEMMINGS_ROUTE', '/lemmings'),
+];
+```
+
+## Usage
+
+Simply add `/lemmings` to your website URL:
 
 ```
-https://jouw-website.nl/lemmings
+https://your-website.com/lemmings
+```
+
+Or use the named route in your application:
+
+```php
+route('lemmings')
 ```
 
 ## Features
-- Automatische route registratie
+- Automatic route registration
 - Zero-configuration setup
-- SEO-vriendelijk (verborgen voor zoekmachines)
-- Werkt met Livewire 3
-- Compatibel met FluxUI
-- Ondersteuning voor Laravel 12
+- SEO-friendly (hidden from search engines)
+- Works with Livewire 3
+- Compatible with FluxUI
+- Support for Laravel 12
 
 ## Changelog
 
-Bekijk [CHANGELOG](CHANGELOG.md) voor alle wijzigingen.
+See [CHANGELOG](CHANGELOG.md) for all changes.
 
 ## Credits
 
 - [Arvid de Jong](https://darvis.nl)
-- [Alle contributors](../../contributors)
+- [All contributors](../../contributors)
 
 ## License
 
-The MIT License (MIT). Bekijk [License File](LICENSE.md) voor meer informatie.
+The MIT License (MIT). See [License File](LICENSE.md) for more information.
