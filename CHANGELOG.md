@@ -2,6 +2,12 @@
 
 All notable changes to the Lemmings package will be documented in this file.
 
+## [1.6.0] - 2026-03-18
+
+### Changed
+
+-   Extended Laravel compatibility to Laravel 13 (`^11.0|^12.0|^13.0`)
+
 ## [1.5.0] - 2026-01-26
 
 ### Added
