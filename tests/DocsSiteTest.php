@@ -191,7 +191,7 @@ test('the pages a beginner needs are there and linked from the home page', funct
 
     foreach (['installation', 'quick-start', 'configuration', 'how-it-works', 'security', 'testing', 'troubleshooting', 'faq'] as $page) {
         expect(is_file(docsPath($page.'.md')))->toBeTrue($page.'.md is missing');
-        expect($home)->toContain(']('.$page.'.md)', $page.'.md is not linked from index.md');
+        expect(str_contains($home, ']('.$page.'.md)'))->toBeTrue($page.'.md is not linked from index.md');
     }
 
     expect(file_get_contents(docsPath('installation.md')))->toContain('## Check that it works');
