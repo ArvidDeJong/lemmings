@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.7.0] - 2026-09-21
+
 ### Security
 - **`GET /clearDgP` was open to every visitor from 1.5.0 to 1.6.0.** The route, which the changelog
   of 1.5.0 did not mention, ran `cache:clear`, `route:clear`, `config:clear`, `view:clear`,
