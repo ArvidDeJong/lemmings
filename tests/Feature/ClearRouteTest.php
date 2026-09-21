@@ -93,7 +93,21 @@ it('takes the token from a header too, which keeps it out of the access log', fu
     expect($kernel->called)->toHaveCount(7);
 });
 
-it('limits how often the route can be tried', function () {
+it('stops trying tokens after five wrong ones, with the same 404', function () {
+    config(['lemmings.clear_token' => 'the-right-secret']);
+    $kernel = fakeArtisan();
+
+    foreach (range(1, 5) as $attempt) {
+        $this->get('/clearDgP?token=wrong')->assertNotFound();
+    }
+
+    // Not a 429: that would tell a stranger the route is there.
+    $this->get('/clearDgP?token=the-right-secret')->assertNotFound();
+
+    expect($kernel->called)->toBe([]);
+});
+
+it('lets the right token in again after a minute', function () {
     config(['lemmings.clear_token' => 'the-right-secret']);
     fakeArtisan();
 
@@ -101,7 +115,32 @@ it('limits how often the route can be tried', function () {
         $this->get('/clearDgP?token=wrong')->assertNotFound();
     }
 
-    $this->get('/clearDgP?token=the-right-secret')->assertStatus(429);
+    $this->travel(61)->seconds();
+
+    $this->get('/clearDgP?token=the-right-secret')->assertOk();
+});
+
+it('does not count a request with the right token', function () {
+    config(['lemmings.clear_token' => 'the-right-secret']);
+    fakeArtisan();
+
+    foreach (range(1, 8) as $attempt) {
+        $this->get('/clearDgP?token=the-right-secret')->assertOk();
+    }
+});
+
+it('answers a refusal exactly like a path that does not exist', function () {
+    config(['lemmings.clear_token' => 'the-right-secret']);
+    fakeArtisan();
+
+    $refused = $this->get('/clearDgP?token=wrong');
+    $unknown = $this->get('/no-such-path-at-all');
+
+    expect($refused->status())->toBe($unknown->status());
+
+    foreach (['X-RateLimit-Limit', 'X-RateLimit-Remaining', 'Retry-After'] as $header) {
+        expect($refused->headers->has($header))->toBeFalse($header.' gives the route away');
+    }
 });
 
 it('keeps its name and path', function () {
