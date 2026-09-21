@@ -5,7 +5,9 @@ use Illuminate\Support\ServiceProvider;
 
 it('merges the package config', function () {
     expect(config('lemmings.route'))->toBe('/lemmings')
-        ->and(config('lemmings.url'))->toBe('https://lemmings.darvis.nl');
+        ->and(config('lemmings.url'))->toBe('https://lemmings.darvis.nl')
+        ->and(config('lemmings'))->toHaveKey('clear_token')
+        ->and(config('lemmings.clear_token'))->toBeNull();
 });
 
 it('offers the config file for publishing', function () {

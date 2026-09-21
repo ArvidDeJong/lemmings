@@ -7,12 +7,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Security
+- **`GET /clearDgP` was open to every visitor from 1.5.0 to 1.6.0.** The route, which the changelog
+  of 1.5.0 did not mention, ran `cache:clear`, `route:clear`, `config:clear`, `view:clear`,
+  `storage:link`, `event:clear` and `optimize:clear` for anyone who requested it, on a path that is
+  the same on every site and is in the public source. A visitor could reset the rate limiters kept
+  in the cache, such as the login throttle, and undo the route and config cache of a deploy, as often
+  as they liked. The route now only works with the secret from `LEMMINGS_CLEAR_TOKEN`, sent in the
+  `X-Lemmings-Token` header or as `?token=`, and it is throttled to five requests a minute. Without
+  a configured token, and for a missing or wrong one, it answers with a plain 404.
+
+  What to do:
+  - You never used the page: nothing. It is closed after the upgrade.
+  - You use the page: set `LEMMINGS_CLEAR_TOKEN` in `.env` to a long random value, for example the
+    output of `php -r "echo bin2hex(random_bytes(24));"`, and call the page with the token:
+    `curl -H "X-Lemmings-Token: your-token" https://your-site.example/clearDgP`. Prefer the header;
+    a token in the address ends up in the access log.
+  - You closed the page yourself with a `Route::get('/clearDgP', ...)` in your own routes: you can
+    remove that line.
+  - You published `config/lemmings.php` before this release: the file has no `clear_token` key, and
+    it does not need one. Laravel fills a missing key from the config file of the package, so the
+    variable in `.env` is enough. Run `php artisan config:cache` again when you cache the config.
+
 ### Added
+- The config key `lemmings.clear_token`, read from `LEMMINGS_CLEAR_TOKEN`, without a default. It is
+  the secret that opens `GET /clearDgP`; an empty value counts as no token.
 - `Darvis\Lemmings\Support\LemmingsConfig`, the one place that reads the package config, with
-  `route()` and `url()`. A test fails the build on a direct `config('lemmings.…')` read.
-- A test suite (Pest on Testbench). The package had none. It covers both routes, the view, the
-  config, the publish tag, and that the page shows nothing from the request and nothing about the
-  application.
+  `clearToken()`, `route()` and `url()`. A test fails the build on a direct `config('lemmings.…')`
+  read.
+- A test suite (Pest on Testbench). The package had none. It covers both routes, the token check
+  and the throttle, the view, the config, the publish tag, and that the page shows nothing from the
+  request and nothing about the application.
 - A documentation site at https://arviddejong.github.io/lemmings/ with an FAQ and an `llms.txt`,
   and a Laravel Boost guideline and skill in `resources/boost/`.
 - The tooling of the other darvis packages: Pint, Larastan level 8, the `test`, `lint`, `format`
@@ -20,22 +45,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   code of conduct and a `.gitattributes` that keeps development files out of the dist archive.
 
 ### Changed
+- `GET /clearDgP` answers 404 until `LEMMINGS_CLEAR_TOKEN` is set, and after that for every request
+  without the right token. With the right token the answer is the same JSON as before. The route
+  has the `throttle:5,1` middleware: the sixth request within a minute gets a 429, which also counts
+  for requests with the right token. The path and the route name `lemmings.clear` are unchanged. A
+  deploy script or a bookmark that calls the page has to send the token from now on.
 - An empty `LEMMINGS_ROUTE` or `LEMMINGS_URL` now counts as not set and falls back to `/lemmings`
   and `https://lemmings.darvis.nl`. Before, an empty route registered the easter egg as the home
   page of the application, and an empty url made the picture link to the page itself. Nothing to
   do unless you relied on that.
-- The keys in `config/lemmings.php` are in alphabetical order (`route`, `url`). Keys, env names and
-  defaults are unchanged; a published config file keeps working as it is.
-
-### Security
-- The documentation now states that the package registers `GET /clearDgP` (route name
-  `lemmings.clear`) without middleware, and that it runs `cache:clear`, `route:clear`,
-  `config:clear`, `view:clear`, `storage:link`, `event:clear` and `optimize:clear` for anyone who
-  requests it. The route has been there since 1.5.0, where the changelog did not mention it, and its
-  behaviour has not changed in this release.
-  Close it in your application when you don't use it: define `Route::get('/clearDgP', fn () => abort(404));`
-  in `routes/web.php`, or block the path in the web server. See the security notes on the
-  documentation site.
+- The keys in `config/lemmings.php` are in alphabetical order (`clear_token`, `route`, `url`). The
+  existing keys, env names and defaults are unchanged; a published config file keeps working as it
+  is.
 
 ## [1.6.0] - 2026-03-18
 

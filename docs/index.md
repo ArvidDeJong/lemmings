@@ -12,8 +12,9 @@ permalink: /
 - **Nothing to set up**: install the package and the page is there.
 - **Your path, your link**: both come from `.env`.
 - **Says nothing about the application**: no versions, no environment, nothing from the request.
+- **Clear the caches without a shell**: a maintenance route that only exists for a request with your secret token.
 
-The package also registers a second route, a maintenance route without authentication. Read the [security notes](security.md) before you install it on a production site.
+Versions 1.5.0 to 1.6.0 had that maintenance route open to every visitor. Use 1.7.0 or later, and read the [security notes](security.md).
 
 ## Requirements
 
@@ -36,9 +37,9 @@ Then open `https://your-site.example/lemmings`.
 ## Pages
 
 - [Installation](installation.md): the package and the first visit
-- [Configuration](configuration.md): the path and the link
-- [How it works](how-it-works.md): the routes, the view and how to use your own page
-- [Security and privacy](security.md): what is public, what the page reveals and how to close it
+- [Configuration](configuration.md): the path, the link and the clear token
+- [How it works](how-it-works.md): the routes, the token check, the view and how to use your own page
+- [Security and privacy](security.md): what is public, what the page reveals and what the token protects
 - [FAQ](faq.md)
 
 ## Links

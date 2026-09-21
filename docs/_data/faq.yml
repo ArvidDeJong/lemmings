@@ -20,15 +20,31 @@
 
 - q: Which routes does darvis/lemmings add to my application?
   a: >-
-    Two, both GET and both without middleware. `lemmings` on the path from `LEMMINGS_ROUTE`, and
+    Two GET routes. `lemmings` on the path from `LEMMINGS_ROUTE`, public and without middleware, and
     `lemmings.clear` on the fixed path `/clearDgP`, which clears the caches and recreates the storage
-    link for anyone who requests it. Read the security notes before you install the package on a
-    production site.
+    link. The second one answers 404 unless the request carries the secret from
+    `LEMMINGS_CLEAR_TOKEN`, and it is throttled to five requests a minute.
+
+- q: How do I clear the cache of a Laravel site without SSH?
+  a: >-
+    With `darvis/lemmings` installed, set `LEMMINGS_CLEAR_TOKEN` in `.env` to a long random value, for
+    example the output of `php -r "echo bin2hex(random_bytes(24));"`, and request `/clearDgP` with
+    that value in the `X-Lemmings-Token` header. The route runs `cache:clear`, `route:clear`,
+    `config:clear`, `view:clear`, `storage:link`, `event:clear` and `optimize:clear`. `?token=` works
+    in a browser too, but then the token ends up in the access log.
+
+- q: Is the /clearDgP route of darvis/lemmings safe?
+  a: >-
+    From 1.7.0 it is closed by default: without `LEMMINGS_CLEAR_TOKEN` it answers 404 for everybody,
+    a wrong token gets the same 404, and it allows five requests a minute. In 1.5.0 to 1.6.0 it was
+    open to every visitor, so upgrade. Whoever has the token can empty the cache and remove the
+    cached routes and config, nothing more; replace the token when it may have leaked.
 
 - q: How do I switch the darvis/lemmings routes off?
   a: >-
-    There is no config switch. Define a route on the same path in your own `routes/web.php`, which
-    replaces the package route, or add `darvis/lemmings` to `extra.laravel.dont-discover` in your
+    The maintenance route is off until you set `LEMMINGS_CLEAR_TOKEN`. There is no config switch for
+    the easter egg page. Define a route on the same path in your own `routes/web.php`, which replaces
+    the package route, or add `darvis/lemmings` to `extra.laravel.dont-discover` in your
     `composer.json` so the provider is never loaded.
 
 - q: Can I change the picture or the text of the easter egg page?

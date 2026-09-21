@@ -32,9 +32,23 @@ php artisan vendor:publish --tag=lemmings-config
 
 This writes `config/lemmings.php`. See [Configuration](configuration.md).
 
-## Before you deploy
+## Clearing the caches without a shell
 
-The package registers two public routes. Read [Security and privacy](security.md) and decide whether you want both of them on a production site.
+On hosting without shell access, set a secret and call the maintenance route with it:
+
+```env
+LEMMINGS_CLEAR_TOKEN=a-long-random-value
+```
+
+```bash
+curl -H "X-Lemmings-Token: a-long-random-value" https://your-site.example/clearDgP
+```
+
+Without the variable the route answers 404, so there is nothing to do when you don't need it. See [Configuration](configuration.md#the-clear-token) and [Security and privacy](security.md).
+
+## Upgrading from 1.5.0 or 1.6.0
+
+In those versions `/clearDgP` was open to every visitor. After the upgrade it is closed. If you use it, set `LEMMINGS_CLEAR_TOKEN` and send the token with the request. If you closed it with your own route on `/clearDgP`, you can remove that route.
 
 ## Removing the package
 

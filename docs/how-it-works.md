@@ -1,7 +1,7 @@
 ---
 title: How it works
 nav_order: 4
-description: "The two routes and the view behind darvis/lemmings, and how to replace the page, add middleware or use your own picture."
+description: "The two routes and the view behind darvis/lemmings, the token check on the maintenance route, and how to replace the page or add middleware."
 ---
 
 # How it works
@@ -13,17 +13,28 @@ The service provider does three things: it merges `config/lemmings.php`, it load
 | Name | Method | Path | Middleware | Answer |
 | --- | --- | --- | --- | --- |
 | `lemmings` | GET | `LEMMINGS_ROUTE`, default `/lemmings` | none | The view `darvis-lemmings::lemmings` |
-| `lemmings.clear` | GET | `/clearDgP` | none | JSON, after clearing the caches |
+| `lemmings.clear` | GET | `/clearDgP` | `throttle:5,1` | With the right token: JSON, after clearing the caches. Otherwise 404 |
 
 Neither route is in the `web` group. The easter egg page therefore starts no session, sets no cookie and does not know who is logged in.
 
-`lemmings.clear` runs `cache:clear`, `route:clear`, `config:clear`, `view:clear`, `storage:link`, `event:clear` and `optimize:clear`, and answers with:
+## The maintenance route
+
+`lemmings.clear` is meant for hosting without shell access. A request goes through these steps:
+
+1. `throttle:5,1` allows five requests a minute for each visitor. The sixth gets a 429.
+2. The token is taken from the `X-Lemmings-Token` header. Only when the request has no such header, it is taken from `?token=`.
+3. The token is compared with `LEMMINGS_CLEAR_TOKEN`. No configured token, an empty one, a missing one or a wrong one all end in the same 404.
+4. With the right token the route runs `cache:clear`, `route:clear`, `config:clear`, `view:clear`, `storage:link`, `event:clear` and `optimize:clear`, and answers with:
 
 ```json
 {"status": "success", "message": "All caches have been cleared and storage link recreated."}
 ```
 
-It is meant for hosting without shell access. It is also open to everybody who knows the path: see [Security and privacy](security.md).
+```bash
+curl -H "X-Lemmings-Token: your-token" https://your-site.example/clearDgP
+```
+
+See [Configuration](configuration.md#the-clear-token) for the token and [Security and privacy](security.md) for what it protects.
 
 ## The page
 
@@ -65,12 +76,9 @@ The routes of your application are registered after the routes of the package, a
 Route::get('/lemmings', fn () => view('darvis-lemmings::lemmings'))
     ->middleware(['web', 'auth'])
     ->name('lemmings');
-
-// Close the maintenance route.
-Route::get('/clearDgP', fn () => abort(404));
 ```
 
-Use the same path as `LEMMINGS_ROUTE` when you changed it.
+Use the same path as `LEMMINGS_ROUTE` when you changed it. The same works for `/clearDgP`, for example to put it behind your own login instead of the token.
 
 ## Leaving the package out of one application
 

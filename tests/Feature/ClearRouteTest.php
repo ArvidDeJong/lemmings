@@ -118,3 +118,17 @@ it('gives way to a host app route on the same path', function () {
 
     $this->get('/clearDgP')->assertOk()->assertSee('mine');
 });
+
+it('reads the header first, and the query string only when there is no header', function () {
+    // The docs say so: a wrong header next to a right ?token= is a refusal.
+    config(['lemmings.clear_token' => 'the-right-secret']);
+    $kernel = fakeArtisan();
+
+    $this->withHeaders(['X-Lemmings-Token' => 'wrong'])->get('/clearDgP?token=the-right-secret')->assertNotFound();
+
+    expect($kernel->called)->toBe([]);
+
+    $this->withHeaders(['X-Lemmings-Token' => 'the-right-secret'])->get('/clearDgP?token=wrong')->assertOk();
+
+    expect($kernel->called)->toHaveCount(7);
+});

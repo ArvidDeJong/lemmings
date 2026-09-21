@@ -16,8 +16,24 @@ test('the accessors return the values the config file ships', function () {
     $config = require lemmingsRoot('config/lemmings.php');
 
     expect(LemmingsConfig::route())->toBe($config['route'])
-        ->and(LemmingsConfig::url())->toBe($config['url']);
+        ->and(LemmingsConfig::url())->toBe($config['url'])
+        ->and($config['clear_token'])->toBeNull()
+        ->and(LemmingsConfig::clearToken())->toBeNull();
 });
+
+test('the clear token is null unless it is a string with something in it', function (mixed $configured, ?string $expected) {
+    config(['lemmings.clear_token' => $configured]);
+
+    expect(LemmingsConfig::clearToken())->toBe($expected);
+})->with([
+    'a secret' => ['the-right-secret', 'the-right-secret'],
+    // An empty secret would match an empty ?token= and open the route to everyone.
+    'empty string' => ['', null],
+    'null' => [null, null],
+    'not a string' => [123, null],
+    'true' => [true, null],
+    'an array' => [['the-right-secret'], null],
+]);
 
 test('the accessors fall back to the defaults when a value is missing or empty', function () {
     config(['lemmings.route' => null, 'lemmings.url' => null]);

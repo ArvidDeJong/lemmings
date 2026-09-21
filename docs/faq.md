@@ -1,7 +1,7 @@
 ---
 title: FAQ
 nav_order: 6
-description: "Short answers about darvis/lemmings: the routes it adds, changing the path and the link, switching it off and what the page reveals."
+description: "Short answers about darvis/lemmings: the routes it adds, the path and the link, clearing the cache without SSH, the token and what the page reveals."
 faq: true
 ---
 

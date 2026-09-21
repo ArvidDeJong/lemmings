@@ -24,10 +24,11 @@ CI runs the tests on PHP 8.2 to 8.4 with Laravel 11, 12 and 13, on the lowest an
 
 ## Pull requests
 
-- Add or update tests for every change in behaviour. The route tests are HTTP tests on Testbench; never run `vendor:publish` or a real Artisan cache command from a test, they write into `vendor/`.
-- Keep the public API compatible within 1.x: the provider class `Darvis\Lemmings\Laravel\Providers\DarvisLemmingsProvider` and the `src/Laravel/` layout, the route names `lemmings` and `lemmings.clear`, the view name `darvis-lemmings::lemmings`, the config keys `lemmings.route` and `lemmings.url` with their defaults, the env names `LEMMINGS_ROUTE` and `LEMMINGS_URL`, and the publish tag `lemmings-config`.
+- Add or update tests for every change in behaviour. The route tests are HTTP tests on Testbench; never run `vendor:publish` or a real Artisan cache command from a test, they write into `vendor/`. The tests of `/clearDgP` swap the `Artisan` facade for a stand-in.
+- Keep the public API compatible within 1.x: the provider class `Darvis\Lemmings\Laravel\Providers\DarvisLemmingsProvider` and the `src/Laravel/` layout, the route names `lemmings` and `lemmings.clear`, the path `/clearDgP` with its JSON answer, the header name `X-Lemmings-Token` and the `token` query parameter, the view name `darvis-lemmings::lemmings`, the config keys `lemmings.clear_token`, `lemmings.route` and `lemmings.url` with their defaults, the env names `LEMMINGS_CLEAR_TOKEN`, `LEMMINGS_ROUTE` and `LEMMINGS_URL`, and the publish tag `lemmings-config`.
 - The text and the design of the easter egg page are the product. Don't change them in a patch or a minor release.
 - Nothing from the request may reach the page, and the page shows nothing about the application (versions, environment, debug state, paths). `tests/Feature/LemmingsRouteTest.php` checks both.
+- The maintenance route stays closed without a token, compares with `hash_equals()`, answers every refusal with the same 404 and keeps its throttle. `tests/Feature/ClearRouteTest.php` checks each of these; a change there needs a very good reason.
 - Read settings through `Support\LemmingsConfig`, never with `config('lemmings.…')`.
 - Write code, comments and messages in English.
 - Update `docs/`, `CHANGELOG.md` (under `Unreleased`) and `resources/boost/` when users will notice the change.

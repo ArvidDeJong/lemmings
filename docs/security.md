@@ -1,64 +1,66 @@
 ---
 title: Security and privacy
 nav_order: 5
-description: "What darvis/lemmings makes public in a Laravel application: two routes without middleware, what the page reveals and how to close the maintenance route."
+description: "What darvis/lemmings adds to a Laravel application: a public easter egg page that reveals nothing, and a maintenance route that only exists with your secret token."
 ---
 
 # Security and privacy
 
-This package adds public routes to every application it is installed in. This page says exactly what they are.
+This package adds two routes to every application it is installed in. This page says exactly what they are.
 
-## What is public
+## What is reachable
 
-| Path | Who can open it | What happens |
+| Path | Who can use it | What happens |
 | --- | --- | --- |
 | `LEMMINGS_ROUTE`, default `/lemmings` | everybody | A static page is shown |
-| `/clearDgP` | everybody | The caches are cleared and the storage link is recreated |
-
-Neither route has middleware: no authentication, no rate limit, no session.
+| `/clearDgP` | whoever has the secret from `LEMMINGS_CLEAR_TOKEN` | The caches are cleared and the storage link is recreated |
+| `/clearDgP` | everybody else, and everybody while no token is set | 404 |
 
 ## What the easter egg page reveals
 
 - That the package is installed, and the address in `LEMMINGS_URL`. With the default that is `https://lemmings.darvis.nl`, which tells a visitor who built the site. That is the purpose of the package.
 - Nothing else. The page shows no Laravel or PHP version, no environment name, no debug state and no file paths.
 - Nothing from the request is written into the page: no query string, no header, no cookie. The only dynamic value is `LEMMINGS_URL`, and it is escaped.
-- The page sets no cookie and stores nothing about the visitor.
+- The route has no middleware. The page sets no cookie and stores nothing about the visitor.
 
 The test suite checks each of these points.
 
 ## The maintenance route
 
-`GET /clearDgP` runs `cache:clear`, `route:clear`, `config:clear`, `view:clear`, `storage:link`, `event:clear` and `optimize:clear` for anyone who requests it. Know what that means before you leave it open:
+`GET /clearDgP` runs `cache:clear`, `route:clear`, `config:clear`, `view:clear`, `storage:link`, `event:clear` and `optimize:clear`. It is there for hosting without shell access.
 
-- `cache:clear` empties the default cache store. Whatever your application keeps there is gone, which can include rate limiter counters such as the login throttle, and locks.
-- `route:clear` and `config:clear` remove the cached routes and config you built during a deploy. The site keeps working, but slower, until the next deploy.
-- A visitor can repeat the request as often as they like.
-- The path is the same in every application that has this package, and it is in the public source code. Do not treat it as a secret.
+- **Closed by default.** Without `LEMMINGS_CLEAR_TOKEN`, or with an empty one, the route answers 404 for every request. An empty `?token=` never matches.
+- **One answer for every refusal.** A missing token, a wrong token and no configured token all give the same 404, so the answer does not tell a visitor whether a token is set or how close a guess was. The token is compared with `hash_equals`, so the time a refusal takes says nothing about how close a guess was.
+- **Throttled.** The route allows five requests a minute for each visitor, counted by IP address, right or wrong. After that it answers 429 until the minute is over. A 429 does show that there is a throttled route on that path.
+- **Header first.** The token is read from the `X-Lemmings-Token` header, and only when there is no such header from `?token=`.
 
-### Closing it
+```bash
+curl -H "X-Lemmings-Token: your-token" https://your-site.example/clearDgP
+```
 
-Pick one:
+```json
+{"status": "success", "message": "All caches have been cleared and storage link recreated."}
+```
 
-1. Replace it in your own `routes/web.php`. The last route on a path wins:
+### What the token protects
 
-   ```php
-   Route::get('/clearDgP', fn () => abort(404));
-   ```
+Whoever has the token can, as often as the throttle allows:
 
-   or keep it, for people who are logged in:
+- empty the default cache store. Whatever your application keeps there is gone, which can include rate limiter counters such as the login throttle, and locks;
+- remove the cached routes and config you built during a deploy. The site keeps working, but slower, until you cache them again.
 
-   ```php
-   Route::get('/clearDgP', function () {
-       Artisan::call('optimize:clear');
+The token gives no access to data and runs nothing but those seven commands.
 
-       return response()->json(['status' => 'success']);
-   })->middleware(['web', 'auth']);
-   ```
+### Keeping the token secret
 
-2. Block the path in the web server or the firewall.
-3. Don't load the package in that application: see [How it works](how-it-works.md#leaving-the-package-out-of-one-application).
+- Generate a long random value: `php -r "echo bin2hex(random_bytes(24));"`. See [Configuration](configuration.md#the-clear-token).
+- Prefer the header. `https://your-site.example/clearDgP?token=your-token` works in a browser, but the address ends up in the access log of the web server, in the browser history and in any proxy in between.
+- When a token may have leaked, put a new value in `LEMMINGS_CLEAR_TOKEN`. Run `php artisan config:cache` again when you cache the config. The old token stops working.
+- Remove the variable to close the route again.
 
-Check the result with `curl -i https://your-site.example/clearDgP`.
+### Versions 1.5.0 to 1.6.0
+
+In those versions `/clearDgP` had no token and no throttle: every visitor could run the seven commands. The path is the same on every site and is in the public source code. Upgrade to 1.7.0 or later. After the upgrade the route is closed until you set a token. If you closed it yourself with a route on the same path in `routes/web.php`, you can remove that line.
 
 ## Reporting a vulnerability
 
