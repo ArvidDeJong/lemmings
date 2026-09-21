@@ -1,28 +1,91 @@
 ---
-title: Installation
+title: "Installation"
 nav_order: 2
-description: "Install darvis/lemmings with Composer, open the easter egg page and publish the config file when you need it."
+description: "Install darvis/lemmings step by step, set your link and the optional clear token, and check with a browser and curl that both routes answer as they should."
 ---
 
 # Installation
 
+## Requirements
+
+- PHP 8.2+
+- Laravel 11, 12 or 13
+
+## Steps
+
+1. Install the package:
+
+   ```bash
+   composer require darvis/lemmings
+   ```
+
+   Laravel finds the service provider by itself (package discovery). There is no migration, no asset and no command to run.
+
+2. Set the address the umbrella links to, in `.env`. Without it the link goes to `https://lemmings.darvis.nl`:
+
+   ```env
+   LEMMINGS_URL=https://your-own-site.example
+   ```
+
+3. Only when you want to clear the caches on hosting without shell access: make a secret and put it in `.env`. Skip this step and the maintenance page stays closed.
+
+   ```bash
+   php -r "echo bin2hex(random_bytes(24));"
+   ```
+
+   ```env
+   LEMMINGS_CLEAR_TOKEN=paste-the-48-characters-here
+   ```
+
+4. When your application caches its config or routes, build the caches again:
+
+   ```bash
+   php artisan config:cache
+   php artisan route:cache
+   ```
+
+All settings are on the [Configuration](configuration.md) page.
+
+## Check that it works
+
+**The easter egg page.** Open `https://your-site.example/lemmings` in a browser. You see a black page with the picture "Oh no! More Lemmings!". Click the umbrella: the address from `LEMMINGS_URL` opens in a new tab.
+
+**The maintenance page without a token.** It must answer 404:
+
 ```bash
-composer require darvis/lemmings
+curl -i https://your-site.example/clearDgP
 ```
 
-Laravel discovers the service provider `Darvis\Lemmings\Laravel\Providers\DarvisLemmingsProvider` by itself. There is no migration, no asset and no command to run.
-
-## The first visit
-
-Open `/lemmings` on your site. You see the picture, and a click on the umbrella opens the address from `LEMMINGS_URL` in a new tab. Out of the box that is `https://lemmings.darvis.nl`, so set your own:
-
-```env
-LEMMINGS_URL=https://your-own-site.example
+```text
+HTTP/1.1 404 Not Found
 ```
 
-In your own code the page is `route('lemmings')`.
+The first line can say `HTTP/2 404` instead; the number is what counts.
 
-## The config file
+**The maintenance page with the token**, when you did step 3. It answers 200 and a line of JSON:
+
+```bash
+curl -i -H "X-Lemmings-Token: paste-the-48-characters-here" https://your-site.example/clearDgP
+```
+
+```text
+HTTP/1.1 200 OK
+
+{"status":"success","message":"All caches have been cleared and storage link recreated."}
+```
+
+After this call the config and route caches are gone. Run step 4 again when you use them.
+
+| You see | It means |
+| --- | --- |
+| 404 on `/lemmings` | The path was changed with `LEMMINGS_ROUTE`, or the routes were cached before you installed the package |
+| The umbrella opens `lemmings.darvis.nl` | `LEMMINGS_URL` is not set, or the config cache is older than your `.env` |
+| 404 on `/clearDgP` with the token | The token does not match, or the config cache is older than your `.env` |
+| 429 on `/clearDgP` | More than five requests in one minute. Wait a minute |
+
+Each of these is worked out on the [Troubleshooting](troubleshooting.md) page.
+
+## Publish the config file
 
 You only need the file when you don't want to use `.env`:
 
@@ -30,30 +93,16 @@ You only need the file when you don't want to use `.env`:
 php artisan vendor:publish --tag=lemmings-config
 ```
 
-This writes `config/lemmings.php`. See [Configuration](configuration.md).
+This writes `config/lemmings.php`.
 
-## Clearing the caches without a shell
+## Upgrade from 1.5.0 or 1.6.0
 
-On hosting without shell access, set a secret and call the maintenance route with it:
+In those versions `/clearDgP` was open to every visitor. After the upgrade it is closed. If you use it, do step 3 and send the token with the request. If you closed it with your own route on `/clearDgP`, you can remove that route.
 
-```env
-LEMMINGS_CLEAR_TOKEN=a-long-random-value
-```
-
-```bash
-curl -H "X-Lemmings-Token: a-long-random-value" https://your-site.example/clearDgP
-```
-
-Without the variable the route answers 404, so there is nothing to do when you don't need it. See [Configuration](configuration.md#the-clear-token) and [Security and privacy](security.md).
-
-## Upgrading from 1.5.0 or 1.6.0
-
-In those versions `/clearDgP` was open to every visitor. After the upgrade it is closed. If you use it, set `LEMMINGS_CLEAR_TOKEN` and send the token with the request. If you closed it with your own route on `/clearDgP`, you can remove that route.
-
-## Removing the package
+## Remove the package
 
 ```bash
 composer remove darvis/lemmings
 ```
 
-Delete `config/lemmings.php` and `resources/views/vendor/darvis-lemmings` when you created them. Run `php artisan route:cache` again when you cache your routes.
+Delete `config/lemmings.php` and `resources/views/vendor/darvis-lemmings` when you created them, and remove `route('lemmings')` from your views. Run `php artisan route:cache` again when you cache your routes.

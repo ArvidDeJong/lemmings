@@ -1,6 +1,6 @@
 ---
-title: FAQ
-nav_order: 6
+title: "FAQ"
+nav_order: 9
 description: "Short answers about darvis/lemmings: the routes it adds, the path and the link, clearing the cache without SSH, the token and what the page reveals."
 faq: true
 ---

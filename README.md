@@ -5,16 +5,16 @@
 [![PHP version](https://img.shields.io/packagist/dependency-v/darvis/lemmings/php.svg)](https://packagist.org/packages/darvis/lemmings)
 [![License](https://img.shields.io/packagist/l/darvis/lemmings.svg)](LICENSE.md)
 
-A hidden Lemmings easter egg page for Laravel applications, with a link to your own site to prove who built it.
+A hidden Lemmings easter egg page for Laravel applications. The umbrella in the picture links to your own site, as a quiet proof of who built the application. The package also adds a page that clears the caches on hosting without shell access, which only works with a secret token.
 
 ## Features
 
 - **Nothing to set up** - install the package and `/lemmings` is there
 - **Your path, your link** - `LEMMINGS_ROUTE` and `LEMMINGS_URL` in `.env`
-- **Clear the caches without a shell** - a maintenance page that only exists with your secret token
 - **Says nothing about the application** - no versions, no environment, nothing from the request on the page
-- **Kept out of search engines** - the page carries `noindex, nofollow`
+- **Asks search engines to stay away** - the page carries `noindex, nofollow`
 - **Your own page** - override the view in `resources/views/vendor/darvis-lemmings`
+- **Clear the caches without a shell** - `/clearDgP`, closed until you set `LEMMINGS_CLEAR_TOKEN`
 - **Laravel Boost** - guideline and skill included, so an AI assistant in your app knows the package
 
 ## Requirements
@@ -28,45 +28,54 @@ A hidden Lemmings easter egg page for Laravel applications, with a link to your 
 composer require darvis/lemmings
 ```
 
+`.env`:
+
 ```env
-LEMMINGS_ROUTE=/lemmings
 LEMMINGS_URL=https://your-own-site.example
 ```
 
 ## Quick start
 
-Open `https://your-site.example/lemmings` and click the umbrella. In your own code the page is `route('lemmings')`.
+Open `https://your-site.example/lemmings` and click the umbrella: your site opens in a new tab. To link to the page from a Blade view, use the route name, because the path can be changed with `LEMMINGS_ROUTE`:
 
-Optionally publish the config file:
-
-```bash
-php artisan vendor:publish --tag=lemmings-config
+```blade
+<a href="{{ route('lemmings') }}" rel="nofollow">&pi;</a>
 ```
 
 ## Clearing the caches without a shell
 
-The package also registers `GET /clearDgP`, which clears the caches and recreates the storage link. It answers 404 until you set a secret, and after that only for a request that carries it:
+Know this before you install: the package registers `GET /clearDgP`, which runs `cache:clear`, `route:clear`, `config:clear`, `view:clear`, `storage:link`, `event:clear` and `optimize:clear`. It answers 404 until you set a secret, and after that only a request that carries the secret gets through. It allows five requests a minute.
+
+```bash
+php -r "echo bin2hex(random_bytes(24));"    # make a token
+```
 
 ```env
-LEMMINGS_CLEAR_TOKEN=a-long-random-value
+LEMMINGS_CLEAR_TOKEN=paste-the-48-characters-here
 ```
 
 ```bash
-php -r "echo bin2hex(random_bytes(24));"                                       # a token
-curl -H "X-Lemmings-Token: a-long-random-value" https://your-site.example/clearDgP
+curl -i -H "X-Lemmings-Token: paste-the-48-characters-here" https://your-site.example/clearDgP
 ```
 
-From 1.5.0 to 1.6.0 this page was open to every visitor. Upgrade, and read the [security notes](https://arviddejong.github.io/lemmings/security.html).
+From 1.5.0 to 1.6.0 this page was open to every visitor. Use 1.7.0 or later, and read the [security notes](https://arviddejong.github.io/lemmings/security.html).
 
 ## Documentation
 
 The full documentation lives on the [documentation site](https://arviddejong.github.io/lemmings/):
 
-- [Installation](https://arviddejong.github.io/lemmings/installation.html)
+- [Installation](https://arviddejong.github.io/lemmings/installation.html): the steps, and how to check that it works
+- [Quick start](https://arviddejong.github.io/lemmings/quick-start.html): your link, a login in front of the page, your own picture
 - [Configuration](https://arviddejong.github.io/lemmings/configuration.html): the path, the link and the clear token
-- [How it works](https://arviddejong.github.io/lemmings/how-it-works.html): the routes, the view and your own page
+- [How it works](https://arviddejong.github.io/lemmings/how-it-works.html): the two routes, the token check and the view
 - [Security and privacy](https://arviddejong.github.io/lemmings/security.html): what is public and what the token protects
+- [Testing](https://arviddejong.github.io/lemmings/testing.html): test the page and the closed maintenance route in your app
+- [Troubleshooting](https://arviddejong.github.io/lemmings/troubleshooting.html): a 404, a 429, the wrong link
 - [FAQ](https://arviddejong.github.io/lemmings/faq.html)
+
+## Laravel Boost
+
+The package ships a guideline and a skill for [Laravel Boost](https://github.com/laravel/boost). Run `php artisan boost:install`, or `php artisan boost:update --discover` in a project that already uses Boost.
 
 ## Testing
 

@@ -99,7 +99,7 @@ Both routes are gone after `composer dump-autoload`.
 
 - The path `/clearDgP` is the same on every site with this package and is in the public source. Only the token is a secret. Whoever has it can empty the default cache store, which can hold rate limiter counters and locks, and remove the cached routes and config.
 - Never put the token in a link, a view, JavaScript, a log line or the repository. Prefer the header over `?token=`. Replace the token when it may have leaked.
-- Don't replace the 404 with a 403 or a message in an override: a different answer for "wrong token" tells a visitor there is something to guess.
+- Don't replace the 404 with a 403 or a message in an override: a different answer for "wrong token" tells a visitor whether a token is configured. The 404 does not hide that the path exists, because it carries the `X-RateLimit-*` headers of the throttle.
 - An empty `LEMMINGS_CLEAR_TOKEN` is no token. It does not make `?token=` with an empty value work.
 - There is no config switch for the easter egg page, no middleware setting and no setting for the throttle. Don't invent `lemmings.enabled` or `lemmings.middleware`; they do nothing.
 - The package routes are outside the `web` group. A view override that uses the session, `@auth` or `@csrf` does not work on the package route.

@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+- Documentation pages: a quick start (your link, a hidden link to the page, a login in front of it,
+  your own view), a testing page with a complete test for a host application, and a troubleshooting
+  page organised by symptom. The installation page has numbered steps and a "Check that it works"
+  section with the `curl -i` calls for `/clearDgP` and the status codes to expect.
+- A Laravel Boost section in the README, which now follows the section order of the other darvis
+  packages.
+
+### Fixed
+- The documentation suggested that a refused request to `/clearDgP` does not show that the route is
+  there. The 404 is the same for every refusal, so it does not tell whether a token is configured or
+  right, but it carries the `X-RateLimit-Limit` and `X-RateLimit-Remaining` headers of the throttle,
+  which a 404 for an unknown path does not have. The security page, the Boost skill and `CLAUDE.md`
+  now say so. Nothing to do: the token is what protects the route, not the path.
+- The security page said the site "keeps working, but slower" after the route and config caches are
+  cleared. It now says what happens: Laravel reads the route and config files on every request
+  until they are cached again.
+- The docs now say that `"status": "success"` from `/clearDgP` means the seven commands were called
+  and none threw an exception. The route does not look at what a command reports, so `storage:link`
+  saying that the link already exists still ends in `success`.
+
 ## [1.7.0] - 2026-09-21
 
 ### Security
