@@ -1,6 +1,41 @@
 # Changelog
 
-All notable changes to the Lemmings package will be documented in this file.
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/).
+
+## [Unreleased]
+
+### Added
+- `Darvis\Lemmings\Support\LemmingsConfig`, the one place that reads the package config, with
+  `route()` and `url()`. A test fails the build on a direct `config('lemmings.…')` read.
+- A test suite (Pest on Testbench). The package had none. It covers both routes, the view, the
+  config, the publish tag, and that the page shows nothing from the request and nothing about the
+  application.
+- A documentation site at https://arviddejong.github.io/lemmings/ with an FAQ and an `llms.txt`,
+  and a Laravel Boost guideline and skill in `resources/boost/`.
+- The tooling of the other darvis packages: Pint, Larastan level 8, the `test`, `lint`, `format`
+  and `analyse` composer scripts, CI on PHP 8.2 to 8.4 with Laravel 11, 12 and 13, issue forms, a
+  code of conduct and a `.gitattributes` that keeps development files out of the dist archive.
+
+### Changed
+- An empty `LEMMINGS_ROUTE` or `LEMMINGS_URL` now counts as not set and falls back to `/lemmings`
+  and `https://lemmings.darvis.nl`. Before, an empty route registered the easter egg as the home
+  page of the application, and an empty url made the picture link to the page itself. Nothing to
+  do unless you relied on that.
+- The keys in `config/lemmings.php` are in alphabetical order (`route`, `url`). Keys, env names and
+  defaults are unchanged; a published config file keeps working as it is.
+
+### Security
+- The documentation now states that the package registers `GET /clearDgP` (route name
+  `lemmings.clear`) without middleware, and that it runs `cache:clear`, `route:clear`,
+  `config:clear`, `view:clear`, `storage:link`, `event:clear` and `optimize:clear` for anyone who
+  requests it. The route has been there since 1.5.0, where the changelog did not mention it, and its
+  behaviour has not changed in this release.
+  Close it in your application when you don't use it: define `Route::get('/clearDgP', fn () => abort(404));`
+  in `routes/web.php`, or block the path in the web server. See the security notes on the
+  documentation site.
 
 ## [1.6.0] - 2026-03-18
 
