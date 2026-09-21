@@ -5,8 +5,8 @@ A hidden easter egg page for a Laravel application: a Lemmings picture whose umb
 - The page is `GET /lemmings`, route name `lemmings`. Link to it with `route('lemmings')`, never with a hard coded path: the path comes from `LEMMINGS_ROUTE`.
 - The link in the picture comes from `LEMMINGS_URL` (default `https://lemmings.darvis.nl`). Config keys: `lemmings.clear_token`, `lemmings.route` and `lemmings.url`. Publish the file with `php artisan vendor:publish --tag=lemmings-config`.
 - The path is read while the application boots. After changing `LEMMINGS_ROUTE` run `php artisan route:cache` again when routes are cached. An empty value falls back to `/lemmings`.
-- **Neither package route is in the `web` group**: no session, no cookie, no authenticated user. The easter egg page has no middleware at all.
-- **The package also registers `GET /clearDgP`** (route name `lemmings.clear`, middleware `throttle:5,1`) for hosting without a shell. It runs `cache:clear`, `route:clear`, `config:clear`, `view:clear`, `storage:link`, `event:clear` and `optimize:clear`, but only for a request that carries the secret from `LEMMINGS_CLEAR_TOKEN`. No configured token, an empty one, a missing one or a wrong one all get the same 404; the sixth request in a minute gets a 429.
+- **Neither package route has middleware**, so neither is in the `web` group: no session, no cookie, no authenticated user.
+- **The package also registers `GET /clearDgP`** (route name `lemmings.clear`) for hosting without a shell. It runs `cache:clear`, `route:clear`, `config:clear`, `view:clear`, `storage:link`, `event:clear` and `optimize:clear`, but only for a request that carries the secret from `LEMMINGS_CLEAR_TOKEN`. No configured token, an empty one, a missing one or a wrong one all get the same 404 as a path that does not exist; there is no 403 and no 429. After five wrong tokens within a minute an IP address gets that 404 for every request, the right token included, until the minute is over. A request with the right token is not counted.
 - Send the token in the `X-Lemmings-Token` header. `?token=` is only read when that header is absent, and it ends up in the access log. Generate a token with `php -r "echo bin2hex(random_bytes(24));"`, never commit it, and replace it when it may have leaked.
 - From 1.5.0 to 1.6.0 that route was open to every visitor. When you see one of those versions in `composer.lock`, tell the user to upgrade.
 - Routes of the application are registered after the package routes and the last route on a path wins. That is the way to add middleware to a package route; there is no config setting for it.
@@ -29,6 +29,6 @@ Route::get('/lemmings', fn () => view('darvis-lemmings::lemmings'))
 // goes in the header, not in the address.
 $response = Http::withHeaders(['X-Lemmings-Token' => $token])->get('https://your-site.example/clearDgP');
 
-$response->status(); // 200 with the right token, 404 without it, 429 after five requests in a minute
+$response->status(); // 200 with the right token, 404 for every refusal, also after five wrong tokens in a minute
 </code-snippet>
 @endverbatim

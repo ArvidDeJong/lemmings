@@ -44,7 +44,7 @@ Open `https://your-site.example/lemmings` and click the umbrella: your site open
 
 ## Clearing the caches without a shell
 
-Know this before you install: the package registers `GET /clearDgP`, which runs `cache:clear`, `route:clear`, `config:clear`, `view:clear`, `storage:link`, `event:clear` and `optimize:clear`. It answers 404 until you set a secret, and after that only a request that carries the secret gets through. It allows five requests a minute.
+Know this before you install: the package registers `GET /clearDgP`, which runs `cache:clear`, `route:clear`, `config:clear`, `view:clear`, `storage:link`, `event:clear` and `optimize:clear`. It answers 404 until you set a secret, and after that only a request that carries the secret gets through. Every refusal is the same 404 as a path that does not exist, and after five wrong tokens in a minute an IP address gets that 404 for every request until the minute is over.
 
 ```bash
 php -r "echo bin2hex(random_bytes(24));"    # make a token
@@ -70,7 +70,7 @@ The full documentation lives on the [documentation site](https://arviddejong.git
 - [How it works](https://arviddejong.github.io/lemmings/how-it-works.html): the two routes, the token check and the view
 - [Security and privacy](https://arviddejong.github.io/lemmings/security.html): what is public and what the token protects
 - [Testing](https://arviddejong.github.io/lemmings/testing.html): test the page and the closed maintenance route in your app
-- [Troubleshooting](https://arviddejong.github.io/lemmings/troubleshooting.html): a 404, a 429, the wrong link
+- [Troubleshooting](https://arviddejong.github.io/lemmings/troubleshooting.html): a 404, a right token that is refused, the wrong link
 - [FAQ](https://arviddejong.github.io/lemmings/faq.html)
 
 ## Laravel Boost

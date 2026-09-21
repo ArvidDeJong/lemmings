@@ -67,7 +67,7 @@ curl -H "X-Lemmings-Token: paste-the-48-characters-here" https://your-site.examp
 
 ## What is not configurable
 
-There is no setting for middleware, for a domain, for the path or the throttle of `/clearDgP`, or for switching the easter egg page off. [Quick start](quick-start.md) shows how to replace a route from your own routes file.
+There is no setting for middleware, for a domain, for the path of `/clearDgP` or its limit of five wrong tokens a minute, or for switching the easter egg page off. [Quick start](quick-start.md) shows how to replace a route from your own routes file.
 
 ## Reading the settings in code
 

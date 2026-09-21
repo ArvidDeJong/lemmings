@@ -81,7 +81,7 @@ After this call the config and route caches are gone. Run step 4 again when you 
 | 404 on `/lemmings` | The path was changed with `LEMMINGS_ROUTE`, or the routes were cached before you installed the package |
 | The umbrella opens `lemmings.darvis.nl` | `LEMMINGS_URL` is not set, or the config cache is older than your `.env` |
 | 404 on `/clearDgP` with the token | The token does not match, or the config cache is older than your `.env` |
-| 429 on `/clearDgP` | More than five requests in one minute. Wait a minute |
+| 404 on `/clearDgP` with the right token, after a few failed tries | Five wrong tokens came from your IP address within a minute. Wait a minute |
 
 Each of these is worked out on the [Troubleshooting](troubleshooting.md) page.
 

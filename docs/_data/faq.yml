@@ -31,7 +31,8 @@
     Two GET routes. `lemmings` on the path from `LEMMINGS_ROUTE`, public and without middleware, and
     `lemmings.clear` on the fixed path `/clearDgP`, which clears the caches and recreates the storage
     link. The second one answers 404 unless the request carries the secret from
-    `LEMMINGS_CLEAR_TOKEN`, and it is throttled to five requests a minute.
+    `LEMMINGS_CLEAR_TOKEN`, and after five wrong tokens in a minute an IP address gets that 404 for
+    every request until the minute is over.
 
 - q: How do I clear the cache of a Laravel site without SSH?
   a: >-
@@ -43,9 +44,10 @@
 
 - q: Is the /clearDgP route of darvis/lemmings safe?
   a: >-
-    From 1.7.0 it is closed by default: without `LEMMINGS_CLEAR_TOKEN` it answers 404 for everybody,
-    a wrong token gets the same 404, and it allows five requests a minute for each visitor. In 1.5.0 to 1.6.0 it was
-    open to every visitor, so upgrade. Whoever has the token can empty the cache and remove the
+    It is closed by default: without `LEMMINGS_CLEAR_TOKEN` it answers 404 for everybody. A wrong
+    token gets the same 404 as a path that does not exist, and after five wrong tokens in a minute
+    an IP address is refused until the minute is over. In 1.5.0 to 1.6.0 it was open to every
+    visitor, and 1.7.0 showed rate limit headers on a refusal, so use the latest version. Whoever has the token can empty the cache and remove the
     cached routes and config, nothing more; replace the token when it may have leaked.
 
 - q: How do I switch the darvis/lemmings routes off?

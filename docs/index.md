@@ -47,7 +47,7 @@ Then open `https://your-site.example/lemmings`.
 - [How it works](how-it-works.md): the two routes, the token check and the view
 - [Security and privacy](security.md): what is public, what the page reveals and what the token protects
 - [Testing](testing.md): test the page and the closed maintenance route in your application
-- [Troubleshooting](troubleshooting.md): a 404, a 429, the wrong link and other symptoms
+- [Troubleshooting](troubleshooting.md): a 404, a right token that is refused, the wrong link and other symptoms
 - [FAQ](faq.md): short answers
 
 ## Links

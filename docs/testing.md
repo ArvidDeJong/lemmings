@@ -67,7 +67,7 @@ it('clears the caches with the token, without running the commands', function ()
 What happens:
 
 - The first two tests render the real view. `assertSee(..., false)` compares the raw HTML, which is needed for the `href`.
-- The third test sets a token and sends none, then a wrong one. Both get a 404 and no command runs.
+- The third test sets a token and sends none, then a wrong one. Both get a 404 and no command runs. Both count as a wrong token, see below.
 - The last test puts a small object in place of the `Artisan` facade with `Artisan::swap()`. The route calls that object instead of the real commands, so the caches of your test application stay as they are.
 
 In PHPUnit the same calls work inside a test method of `Tests\TestCase`.
@@ -88,6 +88,17 @@ To test another path, set it before the application boots, in `phpunit.xml`:
 </php>
 ```
 
-## The throttle counts in tests too
+## The limit of five wrong tokens in tests
 
-`/clearDgP` allows five requests a minute. A single test that sends more than five gets a 429 on the sixth. Split the requests over more tests, or call `Cache::flush()` in between when your test cache store is `array`.
+The route counts wrong and missing tokens for each IP address, which is `127.0.0.1` in a Laravel HTTP test. After five within a minute every request gets a 404, the right token included.
+
+- With the `array` cache store, which the `phpunit.xml` of a new Laravel application sets, every test starts with an empty counter. Only a single test that sends more than five wrong tokens runs into the limit.
+- With another cache store the counter survives from one test to the next. Reset it where you need to:
+
+```php
+use Illuminate\Support\Facades\RateLimiter;
+
+RateLimiter::clear('lemmings-clear:127.0.0.1');
+```
+
+A request with the right token is not counted.

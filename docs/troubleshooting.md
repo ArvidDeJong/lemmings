@@ -1,7 +1,7 @@
 ---
 title: "Troubleshooting"
 nav_order: 8
-description: "Fix darvis/lemmings by symptom: a 404 on /lemmings or /clearDgP, a 429, the umbrella opening the wrong site, Route [lemmings] not defined, a failing route cache."
+description: "Fix darvis/lemmings by symptom: a 404 on /lemmings or /clearDgP, a right token that is refused, the umbrella opening the wrong site, Route [lemmings] not defined, a failing route cache."
 ---
 
 # Troubleshooting
@@ -47,14 +47,20 @@ Every refusal is the same 404, so check these one by one:
 | The token in the address contains characters such as `+`, `&` or `#` | Use a token from `php -r "echo bin2hex(random_bytes(24));"`, which needs no encoding, or send it in the header |
 | Your published `config/lemmings.php` has a `clear_token` key with a fixed value or `null` | A key in your file wins over the package. Make it `'clear_token' => env('LEMMINGS_CLEAR_TOKEN'),` or remove the line |
 | Your application has its own route on `/clearDgP` | The last route on a path wins. Remove yours when you want the package route back |
+| You tried more than five times within a minute | See the next entry |
 
 A published config file without a `clear_token` key is not a cause: Laravel fills the missing key from the package.
 
-## `/clearDgP` gives a 429 Too Many Requests
+## The right token gets a 404 after a few failed tries
 
-A request that asks for JSON gets the message `Too Many Attempts.`. The route allows five requests a minute for each visitor, counted by IP address, with or without the right token. Wait a minute. The `Retry-After` header of the answer says how many seconds.
+The route counts wrong and missing tokens for each IP address. After five within a minute, every request from that address gets a 404 until that minute is over, and the token is not looked at, so the right one is refused too. There is no 429 and no `Retry-After` header: the refusal looks like a path that does not exist.
 
-When you get a 429 on your first request, somebody else shares your counter. Behind a load balancer or proxy every visitor has the same IP address until your application trusts the proxy; see "Configuring Trusted Proxies" in the Laravel documentation.
+| Cause | Fix |
+| --- | --- |
+| Five wrong tokens came from your IP address in the last minute, for example while you tried the entries above | Wait a minute, then send the right token once |
+| You share an IP address with somebody who is guessing. Behind a load balancer or proxy that your application does not trust, every visitor has the address of the proxy | Wait a minute. Then make the application trust the proxy, so Laravel sees the real address: see "Configuring Trusted Proxies" in the Laravel documentation |
+
+A request with the right token is not counted, so using the page never locks you out by itself.
 
 ## The answer says `success`, but the storage link is missing
 
