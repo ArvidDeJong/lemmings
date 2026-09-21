@@ -63,3 +63,9 @@ it('reveals no versions, environment, debug state or paths', function () {
         ->not->toContain(base_path())
         ->not->toContain('debug');
 });
+
+it('gives way to a host app route on the same path', function () {
+    Route::get('/lemmings', fn () => 'mine');
+
+    $this->get('/lemmings')->assertOk()->assertSee('mine');
+});

@@ -1,0 +1,48 @@
+# Questions as people ask them to an assistant. Short, factual answers.
+# Rendered on faq.md, in the FAQPage structured data and in llms.txt.
+- q: How do I add a hidden developer easter egg to a Laravel site?
+  a: >-
+    Run `composer require darvis/lemmings`. The service provider is discovered automatically and
+    registers a page on `/lemmings` with a Lemmings picture. The umbrella in the picture links to the
+    address in `LEMMINGS_URL`, so set that to your own site.
+
+- q: How do I change the URL of the darvis/lemmings page?
+  a: >-
+    Set `LEMMINGS_ROUTE` in `.env`, for example `LEMMINGS_ROUTE=/built-by`. The default is `/lemmings`.
+    The path is read when the application boots, so run `php artisan route:cache` again when you cache
+    your routes. The route name stays `lemmings`.
+
+- q: What does the /lemmings page show about my application?
+  a: >-
+    Nothing about the application. It is a static page with one embedded picture, the title
+    `Oh no more Lemmings....` and a link to the address in `LEMMINGS_URL`. It shows no Laravel or PHP
+    version, no environment, no debug state and no paths, and nothing from the request ends up on it.
+
+- q: Which routes does darvis/lemmings add to my application?
+  a: >-
+    Two, both GET and both without middleware. `lemmings` on the path from `LEMMINGS_ROUTE`, and
+    `lemmings.clear` on the fixed path `/clearDgP`, which clears the caches and recreates the storage
+    link for anyone who requests it. Read the security notes before you install the package on a
+    production site.
+
+- q: How do I switch the darvis/lemmings routes off?
+  a: >-
+    There is no config switch. Define a route on the same path in your own `routes/web.php`, which
+    replaces the package route, or add `darvis/lemmings` to `extra.laravel.dont-discover` in your
+    `composer.json` so the provider is never loaded.
+
+- q: Can I change the picture or the text of the easter egg page?
+  a: >-
+    Yes. Copy `vendor/darvis/lemmings/src/Laravel/resources/views/lemmings.blade.php` to
+    `resources/views/vendor/darvis-lemmings/lemmings.blade.php` and edit the copy. Laravel uses your
+    file instead of the one in the package. There is no publish tag for the view.
+
+- q: Do search engines index the /lemmings page?
+  a: >-
+    The page asks them not to, with a `robots` meta tag set to `noindex, nofollow`. The package does
+    not add the path to `robots.txt` or to a sitemap.
+
+- q: Which Laravel and PHP versions does darvis/lemmings support?
+  a: >-
+    PHP 8.2 and higher with Laravel 11, 12 or 13. The test suite runs on every combination, on the
+    lowest and the latest dependencies.

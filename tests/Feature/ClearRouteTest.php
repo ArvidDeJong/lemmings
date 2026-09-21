@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
 /**
- * The package has registered GET /clearDgP since 1.0. These tests pin what it does today, so a
+ * The package has registered GET /clearDgP since 1.5.0. These tests pin what it does today, so a
  * change to it is a deliberate one. The commands are mocked: running them would clear the caches
  * of the Testbench app and write a storage link into vendor/.
  */
@@ -50,4 +50,12 @@ it('clears the caches, recreates the storage link and answers with JSON', functi
         'event:clear',
         'optimize:clear',
     ]);
+});
+
+it('gives way to a host app route on the same path', function () {
+    // Host app routes are registered after the package routes, and the last route on a path wins.
+    // This is how the docs tell a site owner to close the maintenance route.
+    Route::get('/clearDgP', fn () => abort(404));
+
+    $this->get('/clearDgP')->assertNotFound();
 });
