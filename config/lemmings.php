@@ -6,6 +6,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Clear Token
+    |--------------------------------------------------------------------------
+    |
+    | The secret that opens GET /clearDgP, the page that clears the caches and
+    | recreates the storage link on hosting without a shell. Without a token
+    | the page does not exist. Use a long random value, for example the output
+    | of: php -r "echo bin2hex(random_bytes(24));"
+    |
+    */
+
+    'clear_token' => env('LEMMINGS_CLEAR_TOKEN'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Route Path
     |--------------------------------------------------------------------------
     |
