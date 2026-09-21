@@ -1,5 +1,12 @@
 # Questions as people ask them to an assistant. Short, factual answers.
 # Rendered on faq.md, in the FAQPage structured data and in llms.txt.
+- q: What is darvis/lemmings?
+  a: >-
+    A small Laravel package that adds a hidden easter egg page on `/lemmings`: a Lemmings picture in
+    which the umbrella links to the site of the developer, as a quiet proof of who built the
+    application. It also adds `/clearDgP`, a page that clears the caches on hosting without shell
+    access and only works with a secret token.
+
 - q: How do I add a hidden developer easter egg to a Laravel site?
   a: >-
     Run `composer require darvis/lemmings`. The service provider is discovered automatically and
@@ -12,18 +19,20 @@
     The path is read when the application boots, so run `php artisan route:cache` again when you cache
     your routes. The route name stays `lemmings`.
 
-- q: What does the /lemmings page show about my application?
+- q: What does the /lemmings page show about my application, and do search engines index it?
   a: >-
     Nothing about the application. It is a static page with one embedded picture, the title
     `Oh no more Lemmings....` and a link to the address in `LEMMINGS_URL`. It shows no Laravel or PHP
     version, no environment, no debug state and no paths, and nothing from the request ends up on it.
+    A `robots` meta tag with `noindex, nofollow` asks search engines to leave it out.
 
 - q: Which routes does darvis/lemmings add to my application?
   a: >-
     Two GET routes. `lemmings` on the path from `LEMMINGS_ROUTE`, public and without middleware, and
     `lemmings.clear` on the fixed path `/clearDgP`, which clears the caches and recreates the storage
     link. The second one answers 404 unless the request carries the secret from
-    `LEMMINGS_CLEAR_TOKEN`, and it is throttled to five requests a minute.
+    `LEMMINGS_CLEAR_TOKEN`, and after five wrong tokens in a minute an IP address gets that 404 for
+    every request until the minute is over.
 
 - q: How do I clear the cache of a Laravel site without SSH?
   a: >-
@@ -35,9 +44,10 @@
 
 - q: Is the /clearDgP route of darvis/lemmings safe?
   a: >-
-    From 1.7.0 it is closed by default: without `LEMMINGS_CLEAR_TOKEN` it answers 404 for everybody,
-    a wrong token gets the same 404, and it allows five requests a minute. In 1.5.0 to 1.6.0 it was
-    open to every visitor, so upgrade. Whoever has the token can empty the cache and remove the
+    It is closed by default: without `LEMMINGS_CLEAR_TOKEN` it answers 404 for everybody. A wrong
+    token gets the same 404 as a path that does not exist, and after five wrong tokens in a minute
+    an IP address is refused until the minute is over. In 1.5.0 to 1.6.0 it was open to every
+    visitor, and 1.7.0 showed rate limit headers on a refusal, so use the latest version. Whoever has the token can empty the cache and remove the
     cached routes and config, nothing more; replace the token when it may have leaked.
 
 - q: How do I switch the darvis/lemmings routes off?
@@ -52,11 +62,6 @@
     Yes. Copy `vendor/darvis/lemmings/src/Laravel/resources/views/lemmings.blade.php` to
     `resources/views/vendor/darvis-lemmings/lemmings.blade.php` and edit the copy. Laravel uses your
     file instead of the one in the package. There is no publish tag for the view.
-
-- q: Do search engines index the /lemmings page?
-  a: >-
-    The page asks them not to, with a `robots` meta tag set to `noindex, nofollow`. The package does
-    not add the path to `robots.txt` or to a sitemap.
 
 - q: Which Laravel and PHP versions does darvis/lemmings support?
   a: >-

@@ -11,7 +11,9 @@ These count as a security issue:
   token is configured;
 - a way to tell from the outside whether a token is configured, or to read the token from a
   response, a log line the package writes or an error message;
-- a way around the throttle on the maintenance route, or a way to make the route do more than its
+- a way around the limit of five wrong tokens a minute on the maintenance route, a refusal that
+  answers a GET request differently from a path that does not exist, or a way to make the route do
+  more than its
   seven Artisan commands.
 
 ## Supported versions
@@ -37,8 +39,8 @@ credited, unless you prefer not to be.
 ## What the token protects, and what to do when it leaks
 
 Whoever has the token can clear the default cache store, which can hold rate limiter counters such
-as the login throttle, and can remove the cached routes and config of a deploy, as often as the
-throttle of five requests a minute allows. The token gives no access to data and runs nothing but
+as the login throttle, and can remove the cached routes and config of a deploy, as often as they
+like: a request with the right token is not limited. The token gives no access to data and runs nothing but
 those seven commands.
 
 Treat it like a password. Send it in the `X-Lemmings-Token` header; a `?token=` in the address

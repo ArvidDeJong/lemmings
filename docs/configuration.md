@@ -1,6 +1,6 @@
 ---
-title: Configuration
-nav_order: 3
+title: "Configuration"
+nav_order: 4
 description: "The settings of darvis/lemmings: LEMMINGS_ROUTE, LEMMINGS_URL and LEMMINGS_CLEAR_TOKEN, with their defaults, how to make a token and the effect of caching."
 ---
 
@@ -44,7 +44,7 @@ The address is escaped when it is written into the page. An empty value counts a
 
 ## The clear token
 
-`GET /clearDgP` clears the caches and recreates the storage link, for hosting without shell access. It only exists for a request that carries this secret.
+`GET /clearDgP` clears the caches and recreates the storage link, for hosting without shell access. It only works for a request that carries this secret; every other request gets a 404.
 
 ```bash
 php -r "echo bin2hex(random_bytes(24));"
@@ -67,7 +67,7 @@ curl -H "X-Lemmings-Token: paste-the-48-characters-here" https://your-site.examp
 
 ## What is not configurable
 
-There is no setting for middleware, for a domain, for the path or the throttle of `/clearDgP`, or for switching the easter egg page off. [How it works](how-it-works.md) shows how to replace a route from your own routes file.
+There is no setting for middleware, for a domain, for the path of `/clearDgP` or its limit of five wrong tokens a minute, or for switching the easter egg page off. [Quick start](quick-start.md) shows how to replace a route from your own routes file.
 
 ## Reading the settings in code
 

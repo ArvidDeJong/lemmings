@@ -1,5 +1,5 @@
 title: Lemmings
-description: "darvis/lemmings adds a hidden Lemmings easter egg page to a Laravel application, with a link to the developer's own site to prove who built it."
+description: "darvis/lemmings adds a hidden Lemmings easter egg page to a Laravel application, with a link to the developer's site to prove who built it, and a token protected page that clears the caches without SSH."
 url: https://arviddejong.github.io
 baseurl: /lemmings
 
@@ -18,7 +18,7 @@ package:
   license_url: https://github.com/ArvidDeJong/lemmings/blob/main/LICENSE.md
   requires: "PHP 8.2+, Laravel 11, 12 or 13"
   platforms: [Laravel]
-  keywords: [laravel, easter egg, lemmings, developer credit, hidden page, proof of authorship]
+  keywords: [laravel, easter egg, lemmings, developer credit, hidden page, proof of authorship, clear cache without ssh, shared hosting]
 
 # Developer credit in the footer and the structured data.
 developer:

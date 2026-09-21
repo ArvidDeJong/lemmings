@@ -14,14 +14,14 @@ Use this skill when an application has `darvis/lemmings` installed and the task 
 1. Laravel discovers `Darvis\Lemmings\Laravel\Providers\DarvisLemmingsProvider`.
 2. `register()` merges `config/lemmings.php` under the key `lemmings`.
 3. `boot()` loads the routes file, registers the view namespace `darvis-lemmings` and offers the config file under the publish tag `lemmings-config`.
-4. The routes file registers two GET routes, outside the `web` group:
+4. The routes file registers two GET routes without middleware, so outside the `web` group:
 
 | Name | Path | Middleware | What it does |
 | --- | --- | --- | --- |
 | `lemmings` | `LEMMINGS_ROUTE`, default `/lemmings` | none | Returns the view `darvis-lemmings::lemmings` |
-| `lemmings.clear` | `/clearDgP`, fixed | `throttle:5,1` | With the right token: runs `cache:clear`, `route:clear`, `config:clear`, `view:clear`, `storage:link`, `event:clear`, `optimize:clear` and returns JSON. Otherwise 404 |
+| `lemmings.clear` | `/clearDgP`, fixed | none | With the right token: runs `cache:clear`, `route:clear`, `config:clear`, `view:clear`, `storage:link`, `event:clear`, `optimize:clear` and returns JSON. Otherwise 404 |
 
-A request to `lemmings.clear` is checked like this: the token comes from the `X-Lemmings-Token` header, and only without that header from `?token=`. It is compared with `LemmingsConfig::clearToken()` using `hash_equals()`. No configured token, an empty one, a missing one and a wrong one all end in `abort(404)`.
+A request to `lemmings.clear` is checked in this order. Without a configured token: `abort(404)`. Then `RateLimiter::tooManyAttempts('lemmings-clear:'.$request->ip(), 5)`: `abort(404)` without looking at the token. Then the token, from the `X-Lemmings-Token` header and only without that header from `?token=`, is compared with `LemmingsConfig::clearToken()` using `hash_equals()`. A missing or wrong one is counted with `RateLimiter::hit($key, 60)` and ends in `abort(404)`. The right one is not counted. Every refusal is the 404 of a path that does not exist: no 403, no 429, no rate limit headers.
 
 The view is static: a title, a black background, one embedded picture of 700 by 600 pixels and an image map whose one area (the umbrella) opens `LEMMINGS_URL` in a new tab. It carries `noindex, nofollow`. It has no script and no form, and nothing from the request is written into it.
 
@@ -34,7 +34,7 @@ The view is static: a title, a black background, one embedded picture of 700 by 
 | The umbrella links to `lemmings.darvis.nl` | `LEMMINGS_URL` is not set, or empty | Set it in `.env`, then `php artisan config:cache` when config is cached |
 | `auth()->user()` is null on the page, or `session()` fails in an overridden view | The package route has no `web` middleware | Define your own route on the same path with `['web']` |
 | `/clearDgP` gives a 404 | No `LEMMINGS_CLEAR_TOKEN`, an empty one, a wrong token, or a wrong `X-Lemmings-Token` header next to a right `?token=` (the header wins) | Set the token, send it in the header; `php artisan config:cache` again when config is cached |
-| `/clearDgP` gives a 429 | More than five requests in a minute from that IP address, right or wrong | Wait a minute. Behind a proxy without trusted proxies every visitor shares one address |
+| `/clearDgP` gives a 404 with the right token, after failed tries | Five wrong or missing tokens from that IP address within a minute; the token is not looked at until the minute is over. Behind a proxy the application does not trust, every visitor shares one address | Wait a minute and send the right token once. Configure trusted proxies |
 | Caches are empty or the login throttle resets without a deploy | The package is 1.5.0 to 1.6.0, where `/clearDgP` was open, or the token leaked | Upgrade to 1.7.0 or later; put a new value in `LEMMINGS_CLEAR_TOKEN` |
 | `Route [lemmings] not defined` | The package is in `dont-discover`, or not installed | Remove the link or load the provider |
 
@@ -99,9 +99,10 @@ Both routes are gone after `composer dump-autoload`.
 
 - The path `/clearDgP` is the same on every site with this package and is in the public source. Only the token is a secret. Whoever has it can empty the default cache store, which can hold rate limiter counters and locks, and remove the cached routes and config.
 - Never put the token in a link, a view, JavaScript, a log line or the repository. Prefer the header over `?token=`. Replace the token when it may have leaked.
-- Don't replace the 404 with a 403 or a message in an override: a different answer for "wrong token" tells a visitor there is something to guess.
+- Don't replace the 404 with a 403, a 429 or a message, and don't put the `throttle` middleware on an override of this route: it adds `X-RateLimit-*` headers to every answer, which shows a stranger the route is there. 1.7.0 did that.
+- Don't describe the route as invisible. The path is in the public source, and `POST /clearDgP` answers 405 where an unknown path gives 404. The token protects it, not the path.
 - An empty `LEMMINGS_CLEAR_TOKEN` is no token. It does not make `?token=` with an empty value work.
-- There is no config switch for the easter egg page, no middleware setting and no setting for the throttle. Don't invent `lemmings.enabled` or `lemmings.middleware`; they do nothing.
+- There is no config switch for the easter egg page, no middleware setting and no setting for the limit of five wrong tokens. Don't invent `lemmings.enabled` or `lemmings.middleware`; they do nothing.
 - The package routes are outside the `web` group. A view override that uses the session, `@auth` or `@csrf` does not work on the package route.
 - `LEMMINGS_URL` is escaped but not validated. Whatever is configured becomes the `href`.
 - Never echo request input or application details (versions, environment, debug state, paths) in an overridden view. The page is public.
@@ -135,5 +136,5 @@ it('keeps the maintenance route closed without the token', function () {
 ```
 
 - Assert the 404. Don't send the right token in a test of a host app: the route then really clears the caches of the application under test and writes the storage link.
-- The token is read on every request, so `config(['lemmings.clear_token' => ...])` inside a test works. The route allows five requests a minute; a test that sends more gets a 429.
+- The token is read on every request, so `config(['lemmings.clear_token' => ...])` inside a test works. A missing or wrong token counts towards the limit of five a minute for `127.0.0.1`. With the `array` cache store every test starts at zero; otherwise call `RateLimiter::clear('lemmings-clear:127.0.0.1')`.
 - To test another path, set `lemmings.route` before the application boots (in `getEnvironmentSetUp()` on Testbench, or in `phpunit.xml` with `LEMMINGS_ROUTE`); changing the config inside a test is too late.

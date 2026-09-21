@@ -7,6 +7,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Security
+- **A refused request to `GET /clearDgP` no longer shows that the route is there.** In 1.7.0 the
+  route had the `throttle:5,1` middleware, which put `X-RateLimit-Limit` and `X-RateLimit-Remaining`
+  headers on every answer, the 404 of a refusal included, and answered the sixth request within a
+  minute with a 429. A 404 for a path that does not exist has neither, so one request told a
+  stranger that the route exists. Every refusal is now the 404 of an unknown path, with the same
+  headers: no configured token, a missing token, a wrong token and too many wrong tokens. The
+  route counts the wrong tokens itself, five a minute for each IP address, and while an address is
+  over the limit the token is not looked at. Nothing to do. The path is still in the public source
+  of the package and other methods than GET still answer 405, so keep treating the token, not the
+  path, as the secret.
+
+### Changed
+- `GET /clearDgP` never answers 429 any more, and sends no `X-RateLimit-*` or `Retry-After` header.
+  After five wrong or missing tokens from one IP address within a minute, every request from that
+  address gets a 404 until that minute is over, a request with the right token included. A script
+  that waited for a 429 has to treat a 404 as "wait a minute and try again".
+- A request with the right token no longer counts towards the limit. In 1.7.0 the sixth call within
+  a minute was refused even with the right token.
+- The route has no middleware again. `php artisan route:list` shows none for `lemmings.clear`.
+
+### Added
+- Documentation pages: a quick start (your link, a hidden link to the page, a login in front of it,
+  your own view), a testing page with a complete test for a host application, and a troubleshooting
+  page organised by symptom. The installation page has numbered steps and a "Check that it works"
+  section with the `curl -i` calls for `/clearDgP` and the status codes to expect.
+- A Laravel Boost section in the README, which now follows the section order of the other darvis
+  packages.
+
+### Fixed
+- The security page said the site "keeps working, but slower" after the route and config caches are
+  cleared. It now says what happens: Laravel reads the route and config files on every request
+  until they are cached again.
+- The docs now say that `"status": "success"` from `/clearDgP` means the seven commands were called
+  and none threw an exception. The route does not look at what a command reports, so `storage:link`
+  saying that the link already exists still ends in `success`.
+
 ## [1.7.0] - 2026-09-21
 
 ### Security

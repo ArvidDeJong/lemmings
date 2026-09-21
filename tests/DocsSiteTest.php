@@ -185,3 +185,24 @@ test('the footer credits ARVID.NL without a personal name', function () {
 
     expect(file_get_contents(docsPath('_includes/head_custom.html')))->not->toContain('"Person"');
 });
+
+test('the pages a beginner needs are there and linked from the home page', function () {
+    $home = (string) file_get_contents(docsPath('index.md'));
+
+    foreach (['installation', 'quick-start', 'configuration', 'how-it-works', 'security', 'testing', 'troubleshooting', 'faq'] as $page) {
+        expect(is_file(docsPath($page.'.md')))->toBeTrue($page.'.md is missing');
+        expect(str_contains($home, ']('.$page.'.md)'))->toBeTrue($page.'.md is not linked from index.md');
+    }
+
+    expect(file_get_contents(docsPath('installation.md')))->toContain('## Check that it works');
+});
+
+test('every relative link between pages points at a page that exists', function () {
+    foreach (glob(docsPath('*.md')) as $page) {
+        preg_match_all('/\]\(([a-z0-9-]+\.md)(#[^)]*)?\)/', (string) file_get_contents($page), $links);
+
+        foreach ($links[1] as $target) {
+            expect(is_file(docsPath($target)))->toBeTrue(basename($page).' links to '.$target.', which does not exist');
+        }
+    }
+});
