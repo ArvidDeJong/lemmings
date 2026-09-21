@@ -2,10 +2,11 @@
 
 declare(strict_types=1);
 
+use Darvis\Lemmings\Support\LemmingsConfig;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
-Route::get(config('lemmings.route', '/lemmings'), function () {
+Route::get(LemmingsConfig::route(), function () {
     return view('darvis-lemmings::lemmings');
 })->name('lemmings');
 

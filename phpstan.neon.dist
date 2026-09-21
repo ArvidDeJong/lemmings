@@ -1,0 +1,16 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    level: 8
+    paths:
+        - src
+    ignoreErrors:
+        # Larastan only looks for views in resources/views of the analysed app. It cannot resolve a
+        # view under the package namespace the provider registers with loadViewsFrom(). The view
+        # exists: tests/Feature/ServiceProviderTest.php asserts it.
+        -
+            identifier: argument.type
+            message: '#view-string\|null, string given#'
+            path: src/Laravel/routes/web.php
+            count: 1

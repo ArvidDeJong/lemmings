@@ -6,18 +6,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Lemmings URL
-    |--------------------------------------------------------------------------
-    |
-    | The URL that the lemmings easter egg links to. This is typically the
-    | developer's portfolio or company website to prove ownership.
-    |
-    */
-
-    'url' => env('LEMMINGS_URL', 'https://lemmings.darvis.nl'),
-
-    /*
-    |--------------------------------------------------------------------------
     | Route Path
     |--------------------------------------------------------------------------
     |
@@ -27,5 +15,17 @@ return [
     */
 
     'route' => env('LEMMINGS_ROUTE', '/lemmings'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Lemmings URL
+    |--------------------------------------------------------------------------
+    |
+    | The URL that the lemmings easter egg links to. This is typically the
+    | developer's portfolio or company website to prove ownership.
+    |
+    */
+
+    'url' => env('LEMMINGS_URL', 'https://lemmings.darvis.nl'),
 
 ];
