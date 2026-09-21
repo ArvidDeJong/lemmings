@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.7.1] - 2026-09-21
+
 ### Security
 - **A refused request to `GET /clearDgP` no longer shows that the route is there.** In 1.7.0 the
   route had the `throttle:5,1` middleware, which put `X-RateLimit-Limit` and `X-RateLimit-Remaining`
