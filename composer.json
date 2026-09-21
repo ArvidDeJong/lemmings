@@ -1,40 +1,68 @@
 {
-  "name": "darvis/lemmings",
-  "description": "A fun Lemmings easter egg for Laravel applications to prove developer ownership",
-  "homepage": "https://darvis.nl",
-  "keywords": [
-    "darvis",
-    "laravel",
-    "easter-egg",
-    "lemmings"
-  ],
-  "license": "MIT",
-  "authors": [
-    {
-      "name": "Arvid de Jong",
-      "email": "info@arvid.nl",
-      "homepage": "https://darvis.nl"
-    }
-  ],
-  "autoload": {
-    "psr-4": {
-      "Darvis\\Lemmings\\": "src/"
-    }
-  },
-  "require": {
-    "php": "^8.2",
-    "laravel/framework": "^11.0|^12.0|^13.0"
-  },
-  "extra": {
-    "laravel": {
-      "providers": [
-        "Darvis\\Lemmings\\Laravel\\Providers\\DarvisLemmingsProvider"
-      ]
-    }
-  },
-  "config": {
-    "sort-packages": true
-  },
-  "minimum-stability": "stable",
-  "prefer-stable": true
+    "name": "darvis/lemmings",
+    "description": "A Lemmings easter egg for Laravel applications: a hidden page with a link to the developer, to prove who built the site.",
+    "type": "library",
+    "license": "MIT",
+    "homepage": "https://arviddejong.github.io/lemmings/",
+    "keywords": [
+        "laravel",
+        "easter-egg",
+        "lemmings",
+        "developer-credit",
+        "darvis",
+        "laravel-boost"
+    ],
+    "authors": [
+        {
+            "name": "Arvid de Jong",
+            "email": "info@arvid.nl"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/ArvidDeJong/lemmings/issues",
+        "source": "https://github.com/ArvidDeJong/lemmings",
+        "docs": "https://arviddejong.github.io/lemmings/"
+    },
+    "require": {
+        "php": "^8.2",
+        "laravel/framework": "^11.0|^12.0|^13.0"
+    },
+    "require-dev": {
+        "larastan/larastan": "^3.0",
+        "laravel/pint": "^1.0",
+        "orchestra/testbench": "^9.0|^10.0|^11.0",
+        "pestphp/pest": "^3.0|^4.0",
+        "pestphp/pest-plugin-laravel": "^3.0|^4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Darvis\\Lemmings\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Darvis\\Lemmings\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "pest tests",
+        "lint": "pint --test",
+        "format": "pint",
+        "analyse": "phpstan analyse --memory-limit=1G"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Darvis\\Lemmings\\Laravel\\Providers\\DarvisLemmingsProvider"
+            ]
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
 }

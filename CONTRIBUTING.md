@@ -1,38 +1,39 @@
 # Contributing
 
-Thank you for considering contributing to the Lemmings package!
+Contributions are welcome: bug reports, fixes, documentation and ideas.
 
-## Bug Reports
+## Before you start
 
-When filing a bug report, please include:
+- **Bugs:** open an [issue](https://github.com/ArvidDeJong/lemmings/issues/new/choose) with the steps to reproduce.
+- **Features:** open an issue first. This package stays tiny on purpose, so let's agree a feature fits before you build it.
+- **Security issues:** don't open an issue; see [SECURITY.md](SECURITY.md).
 
-- A clear description of the issue
-- Steps to reproduce the behavior
-- Expected behavior
-- Laravel and PHP version
-- Any relevant error messages or logs
+## Development
 
-## Pull Requests
+```bash
+git clone https://github.com/ArvidDeJong/lemmings.git
+cd lemmings
+composer install
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Make your changes
-4. Ensure your code follows PSR-12 coding standards
-5. Commit your changes (`git commit -m 'Add amazing feature'`)
-6. Push to the branch (`git push origin feature/amazing-feature`)
-7. Open a Pull Request
+composer test      # Pest
+composer lint      # Pint, check only (composer format fixes)
+composer analyse   # Larastan, level 8
+```
 
-## Coding Standards
+CI runs the tests on PHP 8.2 to 8.4 with Laravel 11, 12 and 13, on the lowest and the latest dependencies.
 
-- Follow PSR-12 coding standards
-- Use `declare(strict_types=1)` in all PHP files
-- Write meaningful commit messages
-- Keep pull requests focused on a single feature or fix
+## Pull requests
 
-## Security Vulnerabilities
+- Add or update tests for every change in behaviour. The route tests are HTTP tests on Testbench; never run `vendor:publish` or a real Artisan cache command from a test, they write into `vendor/`. The tests of `/clearDgP` swap the `Artisan` facade for a stand-in.
+- Keep the public API compatible within 1.x: the provider class `Darvis\Lemmings\Laravel\Providers\DarvisLemmingsProvider` and the `src/Laravel/` layout, the route names `lemmings` and `lemmings.clear`, the path `/clearDgP` with its JSON answer, the header name `X-Lemmings-Token` and the `token` query parameter, the view name `darvis-lemmings::lemmings`, the config keys `lemmings.clear_token`, `lemmings.route` and `lemmings.url` with their defaults, the env names `LEMMINGS_CLEAR_TOKEN`, `LEMMINGS_ROUTE` and `LEMMINGS_URL`, and the publish tag `lemmings-config`.
+- The text and the design of the easter egg page are the product. Don't change them in a patch or a minor release.
+- Nothing from the request may reach the page, and the page shows nothing about the application (versions, environment, debug state, paths). `tests/Feature/LemmingsRouteTest.php` checks both.
+- The maintenance route stays closed without a token, compares with `hash_equals()`, answers every refusal with the same 404 and keeps its throttle. `tests/Feature/ClearRouteTest.php` checks each of these; a change there needs a very good reason.
+- Read settings through `Support\LemmingsConfig`, never with `config('lemmings.…')`.
+- Write code, comments and messages in English.
+- Update `docs/`, `CHANGELOG.md` (under `Unreleased`) and `resources/boost/` when users will notice the change.
+- The documentation in `docs/` is also the website. Don't write `{{ }}` or `{% %}` there outside a raw block; Jekyll would render it.
 
-If you discover a security vulnerability, please email arvid@darvis.nl instead of using the issue tracker.
+## Code of conduct
 
-## License
-
-By contributing, you agree that your contributions will be licensed under the MIT License.
+This project follows the [Contributor Covenant](CODE_OF_CONDUCT.md).
