@@ -89,6 +89,10 @@ composer analyse   # Larastan
 
 See [CHANGELOG](CHANGELOG.md).
 
+## Support the package
+
+If darvis/lemmings saves you time, a star on [GitHub](https://github.com/ArvidDeJong/lemmings) or a favourite on [Packagist](https://packagist.org/packages/darvis/lemmings) helps other developers find it.
+
 ## Contributing
 
 See [CONTRIBUTING](CONTRIBUTING.md).
