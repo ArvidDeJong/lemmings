@@ -91,7 +91,7 @@ See [CHANGELOG](CHANGELOG.md).
 
 ## Support the package
 
-If darvis/lemmings saves you time, a star on [GitHub](https://github.com/ArvidDeJong/lemmings) or a favourite on [Packagist](https://packagist.org/packages/darvis/lemmings) helps other developers find it.
+If darvis/lemmings saves you time, buy me a beer 🍺: [sponsor me on GitHub](https://github.com/sponsors/ArvidDeJong).
 
 ## Contributing
 
