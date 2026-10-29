@@ -37,8 +37,8 @@
 
 - q: How do I clear the cache of a Laravel site without SSH?
   a: >-
-    With `darvis/lemmings` installed, set `LEMMINGS_CLEAR_TOKEN` in `.env` to a long random value, for
-    example the output of `php -r "echo bin2hex(random_bytes(24));"`, and request `/clearDgP` with
+    With `darvis/lemmings` installed, run `php artisan lemmings:install`, which writes a random
+    `LEMMINGS_CLEAR_TOKEN` to `.env` and shows it once, and request `/clearDgP` with
     that value in the `X-Lemmings-Token` header. The route runs `cache:clear`, `route:clear`,
     `config:clear`, `view:clear`, `storage:link`, `event:clear` and `optimize:clear`. `?token=` works
     in a browser too, but then the token ends up in the access log.
@@ -68,7 +68,7 @@
   a: >-
     With `darvis/lemmings` installed and `LEMMINGS_CLEAR_TOKEN` set, open `/lemmings/packages` with
     that token in the `X-Lemmings-Token` header or as `?token=`. The page lists the packages from
-    `config/lemmings.php`, by default a few `darvis/*` packages, `laravel/ai`, `laravel/boost` and `sentry/sentry-laravel`, each
+    `config/lemmings.php`, by default a few `darvis/*` packages, `laravel-lang/common`, `laravel/ai`, `laravel/boost` and `sentry/sentry-laravel`, each
     with a link, its purpose and the installed version or "not installed". Publish the config file to
     change the list, and set `LEMMINGS_LAYOUT=layouts.app` to show the page in your own layout.
 

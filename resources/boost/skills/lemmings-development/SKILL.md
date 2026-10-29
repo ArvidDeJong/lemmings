@@ -13,7 +13,7 @@ Use this skill when an application has `darvis/lemmings` installed and the task 
 
 1. Laravel discovers `Darvis\Lemmings\Laravel\Providers\DarvisLemmingsProvider`.
 2. `register()` merges `config/lemmings.php` under the key `lemmings`.
-3. `boot()` loads the routes file, registers the view namespace `darvis-lemmings` and offers the config file under the publish tag `lemmings-config`.
+3. `boot()` loads the routes file, registers the view namespace `darvis-lemmings`, registers the `lemmings:install` command and offers the config file under the publish tag `lemmings-config`.
 4. The routes file registers three GET routes without middleware, so outside the `web` group:
 
 | Name | Path | Middleware | What it does |
@@ -36,7 +36,9 @@ The packages view renders `Darvis\Lemmings\Support\Packages::status()`: for ever
 | The new path gives a 404, the old one still works | Routes are cached; the path is read while the application boots | `php artisan route:cache` again |
 | The umbrella links to `lemmings.darvis.nl` | `LEMMINGS_URL` is not set, or empty | Set it in `.env`, then `php artisan config:cache` when config is cached |
 | `auth()->user()` is null on the page, or `session()` fails in an overridden view | The package route has no `web` middleware | Define your own route on the same path with `['web']` |
-| `/clearDgP` or `/lemmings/packages` gives a 404 | No `LEMMINGS_CLEAR_TOKEN`, an empty one, a wrong token, or a wrong `X-Lemmings-Token` header next to a right `?token=` (the header wins) | Set the token, send it in the header; `php artisan config:cache` again when config is cached |
+| `/clearDgP` or `/lemmings/packages` gives a 404 | No `LEMMINGS_CLEAR_TOKEN`, an empty one, a wrong token, or a wrong `X-Lemmings-Token` header next to a right `?token=` (the header wins) | `php artisan lemmings:install`, send the token in the header; `php artisan config:cache` again when config is cached |
+| `lemmings:install` says the token is already set | `.env` has a `LEMMINGS_CLEAR_TOKEN` | Keep it, or `--force` to replace it |
+| `lemmings:install` says there is no `.env` | The application has no `.env` file | `cp .env.example .env`, then run it again |
 | The packages page shows "Unable to locate a class or view for component" | `LEMMINGS_LAYOUT` names a component that does not exist | Use the component name, `layouts.app` for `resources/views/components/layouts/app.blade.php`, or remove the variable |
 | The packages page breaks on `session()`, `@auth` or a Livewire component in your layout | The package route has no `web` middleware | Register `lemmings.packages` yourself with `['web']`, same path and name |
 | A package is missing from the packages page | Its entry misses `name`, `purpose` or `url`, or a published config replaced the list | Complete the entry in your published `config/lemmings.php` |
@@ -67,7 +69,15 @@ Route::get('/lemmings', fn () => view('darvis-lemmings::lemmings'))
 
 ### Use the maintenance route
 
-The route is closed until a token is set.
+The route is closed until a token is set. The command makes one and writes it to `.env`:
+
+```bash
+php artisan lemmings:install
+php artisan lemmings:install --force                               # replace a token that is there
+php artisan lemmings:install --url=https://your-own-site.example   # also write LEMMINGS_URL
+```
+
+By hand:
 
 ```bash
 php -r "echo bin2hex(random_bytes(24));"
@@ -141,7 +151,7 @@ Both routes are gone after `composer dump-autoload`.
 | --- | --- | --- |
 | `lemmings.clear_token` | `LEMMINGS_CLEAR_TOKEN` | none, the maintenance route and the packages page are closed |
 | `lemmings.layout` | `LEMMINGS_LAYOUT` | none, the packages page uses `darvis-lemmings::layout` |
-| `lemmings.packages` | | a few `darvis/*` packages, `laravel/ai`, `laravel/boost` and `sentry/sentry-laravel` |
+| `lemmings.packages` | | a few `darvis/*` packages, `laravel-lang/common`, `laravel/ai`, `laravel/boost` and `sentry/sentry-laravel` |
 | `lemmings.route` | `LEMMINGS_ROUTE` | `/lemmings`; the packages page is on that path plus `/packages` |
 | `lemmings.url` | `LEMMINGS_URL` | `https://lemmings.darvis.nl` |
 

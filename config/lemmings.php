@@ -58,6 +58,11 @@ return [
             'purpose' => 'Validates recipients before sending, logs every outgoing mail, processes signed Mailtrap webhooks and ships an inbox page.',
             'url' => 'https://packagist.org/packages/darvis/mailtrap',
         ],
+        'laravel-lang/common' => [
+            'name' => 'Laravel Lang',
+            'purpose' => 'Translations of the messages Laravel, its validation rules and the starter kits ship, in many languages, kept up to date with one command.',
+            'url' => 'https://packagist.org/packages/laravel-lang/common',
+        ],
         'laravel/ai' => [
             'name' => 'Laravel AI SDK',
             'purpose' => 'One API for OpenAI, Anthropic, Gemini and other providers: agents with tools, structured output, embeddings, images and audio.',

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Darvis\Lemmings\Laravel\Providers;
 
+use Darvis\Lemmings\Laravel\Console\Commands\LemmingsInstallCommand;
 use Illuminate\Support\ServiceProvider;
 
 class DarvisLemmingsProvider extends ServiceProvider
@@ -17,6 +18,8 @@ class DarvisLemmingsProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'darvis-lemmings');
 
         if ($this->app->runningInConsole()) {
+            $this->commands([LemmingsInstallCommand::class]);
+
             $this->publishes([
                 __DIR__.'/../../../config/lemmings.php' => config_path('lemmings.php'),
             ], 'lemmings-config');

@@ -19,30 +19,35 @@ description: "Install darvis/lemmings step by step, set your link and the option
    composer require darvis/lemmings
    ```
 
-   Laravel finds the service provider by itself (package discovery). There is no migration, no asset and no command to run.
+   Laravel finds the service provider by itself (package discovery). There is no migration and no asset.
 
-2. Set the address the umbrella links to, in `.env`. Without it the link goes to `https://lemmings.darvis.nl`:
+2. Make the token and set your link, in one go:
 
-   ```env
-   LEMMINGS_URL=https://your-own-site.example
+   ```bash
+   php artisan lemmings:install --url=https://your-own-site.example
    ```
 
-3. Only when you want to clear the caches on hosting without shell access: make a secret and put it in `.env`. Skip this step and the maintenance page stays closed.
+   The command writes `LEMMINGS_URL` and a fresh `LEMMINGS_CLEAR_TOKEN` (48 hex characters) to `.env` and shows the token once; copy it somewhere safe. A token that is already in `.env` is kept, unless you pass `--force`. Without `.env` the command stops and writes nothing.
+
+   You can also do it by hand. Without `LEMMINGS_URL` the umbrella links to `https://lemmings.darvis.nl`; without `LEMMINGS_CLEAR_TOKEN` the maintenance page and the packages page stay closed:
 
    ```bash
    php -r "echo bin2hex(random_bytes(24));"
    ```
 
    ```env
+   LEMMINGS_URL=https://your-own-site.example
    LEMMINGS_CLEAR_TOKEN=paste-the-48-characters-here
    ```
 
-4. When your application caches its config or routes, build the caches again:
+3. When your application caches its config or routes, build the caches again:
 
    ```bash
    php artisan config:cache
    php artisan route:cache
    ```
+
+`.env` is not in git, so run `lemmings:install` on every server, or copy the token there.
 
 All settings are on the [Configuration](configuration.md) page.
 

@@ -61,7 +61,7 @@ The token gives no access to data and runs nothing but those seven commands.
 
 ### Keeping the token secret
 
-- Generate a long random value: `php -r "echo bin2hex(random_bytes(24));"`. See [Configuration](configuration.md#the-clear-token).
+- Generate a long random value: `php artisan lemmings:install`, or `php -r "echo bin2hex(random_bytes(24));"`. See [Configuration](configuration.md#the-clear-token). The command shows the token once and does not log it; `--force` replaces a leaked one.
 - Prefer the header. `https://your-site.example/clearDgP?token=your-token` works in a browser, but the address ends up in the access log of the web server, in the browser history and in any proxy in between.
 - When a token may have leaked, put a new value in `LEMMINGS_CLEAR_TOKEN`. Run `php artisan config:cache` again when you cache the config. The old token stops working.
 - Remove the variable to close the route again.
