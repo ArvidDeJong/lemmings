@@ -1,6 +1,6 @@
 ---
 name: lemmings-development
-description: Work with darvis/lemmings. Use it to set the path and the link of the Lemmings easter egg page, replace the page with your own view, put it behind middleware, clear the caches without a shell through the token protected /clearDgP route, and test those routes.
+description: Work with darvis/lemmings. Use it to set the path and the link of the Lemmings easter egg page, replace the page with your own view, put it behind middleware, clear the caches without a shell through the token protected /clearDgP route, list which packages are installed on the token protected packages page, and test those routes.
 ---
 
 # darvis/lemmings development
@@ -14,16 +14,19 @@ Use this skill when an application has `darvis/lemmings` installed and the task 
 1. Laravel discovers `Darvis\Lemmings\Laravel\Providers\DarvisLemmingsProvider`.
 2. `register()` merges `config/lemmings.php` under the key `lemmings`.
 3. `boot()` loads the routes file, registers the view namespace `darvis-lemmings` and offers the config file under the publish tag `lemmings-config`.
-4. The routes file registers two GET routes without middleware, so outside the `web` group:
+4. The routes file registers three GET routes without middleware, so outside the `web` group:
 
 | Name | Path | Middleware | What it does |
 | --- | --- | --- | --- |
 | `lemmings` | `LEMMINGS_ROUTE`, default `/lemmings` | none | Returns the view `darvis-lemmings::lemmings` |
+| `lemmings.packages` | `LEMMINGS_ROUTE` plus `/packages`, default `/lemmings/packages` | none | With the right token: returns the view `darvis-lemmings::packages`, the `lemmings.packages` list with the installed version of each. Otherwise 404 |
 | `lemmings.clear` | `/clearDgP`, fixed | none | With the right token: runs `cache:clear`, `route:clear`, `config:clear`, `view:clear`, `storage:link`, `event:clear`, `optimize:clear` and returns JSON. Otherwise 404 |
 
-A request to `lemmings.clear` is checked in this order. Without a configured token: `abort(404)`. Then `RateLimiter::tooManyAttempts('lemmings-clear:'.$request->ip(), 5)`: `abort(404)` without looking at the token. Then the token, from the `X-Lemmings-Token` header and only without that header from `?token=`, is compared with `LemmingsConfig::clearToken()` using `hash_equals()`. A missing or wrong one is counted with `RateLimiter::hit($key, 60)` and ends in `abort(404)`. The right one is not counted. Every refusal is the 404 of a path that does not exist: no 403, no 429, no rate limit headers.
+A request to `lemmings.packages` or `lemmings.clear` goes through `Darvis\Lemmings\Support\TokenGuard::check($request)`, in this order. Without a configured token: `abort(404)`. Then `RateLimiter::tooManyAttempts('lemmings-clear:'.$request->ip(), 5)`: `abort(404)` without looking at the token. Then the token, from the `X-Lemmings-Token` header and only without that header from `?token=`, is compared with `LemmingsConfig::clearToken()` using `hash_equals()`. A missing or wrong one is counted with `RateLimiter::hit($key, 60)` and ends in `abort(404)`. The right one is not counted. Every refusal is the 404 of a path that does not exist: no 403, no 429, no rate limit headers.
 
-The view is static: a title, a black background, one embedded picture of 700 by 600 pixels and an image map whose one area (the umbrella) opens `LEMMINGS_URL` in a new tab. It carries `noindex, nofollow`. It has no script and no form, and nothing from the request is written into it.
+The easter egg view is static: a title, a black background, one embedded picture of 700 by 600 pixels and an image map whose one area (the umbrella) opens `LEMMINGS_URL` in a new tab. It carries `noindex, nofollow`. It has no script and no form, and nothing from the request is written into it.
+
+The packages view renders `Darvis\Lemmings\Support\Packages::status()`: for every entry of `lemmings.packages` (keyed by Composer name, with `name`, `purpose` and `url`) the name as a link, the Composer name, the version from `Composer\InstalledVersions` or "not installed", and the purpose. It is plain HTML with its own `<style>` block inside `<x-dynamic-component :component="LemmingsConfig::layout()">`: the component from `LEMMINGS_LAYOUT` (`layouts.app` for `resources/views/components/layouts/app.blade.php`) or the package's own `darvis-lemmings::layout`, which carries `noindex, nofollow`.
 
 ## When something is off
 
@@ -33,9 +36,12 @@ The view is static: a title, a black background, one embedded picture of 700 by 
 | The new path gives a 404, the old one still works | Routes are cached; the path is read while the application boots | `php artisan route:cache` again |
 | The umbrella links to `lemmings.darvis.nl` | `LEMMINGS_URL` is not set, or empty | Set it in `.env`, then `php artisan config:cache` when config is cached |
 | `auth()->user()` is null on the page, or `session()` fails in an overridden view | The package route has no `web` middleware | Define your own route on the same path with `['web']` |
-| `/clearDgP` gives a 404 | No `LEMMINGS_CLEAR_TOKEN`, an empty one, a wrong token, or a wrong `X-Lemmings-Token` header next to a right `?token=` (the header wins) | Set the token, send it in the header; `php artisan config:cache` again when config is cached |
+| `/clearDgP` or `/lemmings/packages` gives a 404 | No `LEMMINGS_CLEAR_TOKEN`, an empty one, a wrong token, or a wrong `X-Lemmings-Token` header next to a right `?token=` (the header wins) | Set the token, send it in the header; `php artisan config:cache` again when config is cached |
+| The packages page shows "Unable to locate a class or view for component" | `LEMMINGS_LAYOUT` names a component that does not exist | Use the component name, `layouts.app` for `resources/views/components/layouts/app.blade.php`, or remove the variable |
+| The packages page breaks on `session()`, `@auth` or a Livewire component in your layout | The package route has no `web` middleware | Register `lemmings.packages` yourself with `['web']`, same path and name |
+| A package is missing from the packages page | Its entry misses `name`, `purpose` or `url`, or a published config replaced the list | Complete the entry in your published `config/lemmings.php` |
 | `/clearDgP` gives a 404 with the right token, after failed tries | Five wrong or missing tokens from that IP address within a minute; the token is not looked at until the minute is over. Behind a proxy the application does not trust, every visitor shares one address | Wait a minute and send the right token once. Configure trusted proxies |
-| Caches are empty or the login throttle resets without a deploy | The package is 1.5.0 to 1.6.0, where `/clearDgP` was open, or the token leaked | Upgrade to 1.7.0 or later; put a new value in `LEMMINGS_CLEAR_TOKEN` |
+| Caches are empty or the login throttle resets without a deploy | The token leaked | Put a new value in `LEMMINGS_CLEAR_TOKEN` |
 | `Route [lemmings] not defined` | The package is in `dont-discover`, or not installed | Remove the link or load the provider |
 
 ## Scenarios
@@ -79,6 +85,26 @@ The answer is `{"status":"success","message":"All caches have been cleared and s
 
 A `config/lemmings.php` published before 1.7.0 has no `clear_token` key. That is fine: `mergeConfigFrom()` fills the missing key from the package config, so the env variable is enough.
 
+### See which packages are installed
+
+With the token set, open `/lemmings/packages?token=the-generated-value` or send the header. To change the list, publish the config and edit `packages`; the published array replaces the one of the package:
+
+```php
+'packages' => [
+    'spatie/laravel-backup' => [
+        'name' => 'Laravel Backup',
+        'purpose' => 'Backs up the database and the files.',
+        'url' => 'https://github.com/spatie/laravel-backup',
+    ],
+],
+```
+
+To show the page in the layout of the application:
+
+```env
+LEMMINGS_LAYOUT=layouts.app
+```
+
 ### Use your own page
 
 Copy `vendor/darvis/lemmings/src/Laravel/resources/views/lemmings.blade.php` to `resources/views/vendor/darvis-lemmings/lemmings.blade.php` and edit the copy. There is no publish tag for the view. Keep the link on the setting, with the escaping echo:
@@ -99,11 +125,12 @@ Both routes are gone after `composer dump-autoload`.
 
 - The path `/clearDgP` is the same on every site with this package and is in the public source. Only the token is a secret. Whoever has it can empty the default cache store, which can hold rate limiter counters and locks, and remove the cached routes and config.
 - Never put the token in a link, a view, JavaScript, a log line or the repository. Prefer the header over `?token=`. Replace the token when it may have leaked.
-- Don't replace the 404 with a 403, a 429 or a message, and don't put the `throttle` middleware on an override of this route: it adds `X-RateLimit-*` headers to every answer, which shows a stranger the route is there. 1.7.0 did that.
+- Don't replace the 404 with a 403, a 429 or a message, and don't put the `throttle` middleware on an override of this route: it adds `X-RateLimit-*` headers to every answer, which shows a stranger the route is there.
 - Don't describe the route as invisible. The path is in the public source, and `POST /clearDgP` answers 405 where an unknown path gives 404. The token protects it, not the path.
 - An empty `LEMMINGS_CLEAR_TOKEN` is no token. It does not make `?token=` with an empty value work.
 - There is no config switch for the easter egg page, no middleware setting and no setting for the limit of five wrong tokens. Don't invent `lemmings.enabled` or `lemmings.middleware`; they do nothing.
-- The package routes are outside the `web` group. A view override that uses the session, `@auth` or `@csrf` does not work on the package route.
+- The package routes are outside the `web` group. A view override or a layout that uses the session, `@auth`, `@csrf` or a Livewire component does not work on a package route.
+- The packages page shows installed versions, which is why it needs the token. Don't register it yourself without that check, and don't put the list on the public easter egg page.
 - `LEMMINGS_URL` is escaped but not validated. Whatever is configured becomes the `href`.
 - Never echo request input or application details (versions, environment, debug state, paths) in an overridden view. The page is public.
 - Don't hard code `/lemmings` in links; use `route('lemmings')`.
@@ -112,11 +139,13 @@ Both routes are gone after `composer dump-autoload`.
 
 | Key | `.env` | Default |
 | --- | --- | --- |
-| `lemmings.clear_token` | `LEMMINGS_CLEAR_TOKEN` | none, the maintenance route is closed |
-| `lemmings.route` | `LEMMINGS_ROUTE` | `/lemmings` |
+| `lemmings.clear_token` | `LEMMINGS_CLEAR_TOKEN` | none, the maintenance route and the packages page are closed |
+| `lemmings.layout` | `LEMMINGS_LAYOUT` | none, the packages page uses `darvis-lemmings::layout` |
+| `lemmings.packages` | | a few `darvis/*` packages, `laravel/ai`, `laravel/boost` and `sentry/sentry-laravel` |
+| `lemmings.route` | `LEMMINGS_ROUTE` | `/lemmings`; the packages page is on that path plus `/packages` |
 | `lemmings.url` | `LEMMINGS_URL` | `https://lemmings.darvis.nl` |
 
-Inside the package they are read through `Darvis\Lemmings\Support\LemmingsConfig`: `route()` and `url()` return the default for a missing or empty value, `clearToken()` returns `null` for a missing, empty or non string value.
+Inside the package they are read through `Darvis\Lemmings\Support\LemmingsConfig`: `route()`, `packagesRoute()`, `url()` and `layout()` return the default for a missing or empty value, `packages()` returns only the complete entries, `clearToken()` returns `null` for a missing, empty or non string value.
 
 ## Testing
 
@@ -127,11 +156,21 @@ it('shows the easter egg', function () {
         ->assertViewIs('darvis-lemmings::lemmings');
 });
 
-it('keeps the maintenance route closed without the token', function () {
+it('keeps the maintenance route and the packages page closed without the token', function () {
     config(['lemmings.clear_token' => 'test-token']);
 
     $this->get('/clearDgP')->assertNotFound();
     $this->get('/clearDgP?token=wrong')->assertNotFound();
+    $this->get(route('lemmings.packages'))->assertNotFound();
+});
+
+it('lists the packages with the token', function () {
+    config(['lemmings.clear_token' => 'test-token']);
+
+    $this->withHeaders(['X-Lemmings-Token' => 'test-token'])
+        ->get(route('lemmings.packages'))
+        ->assertOk()
+        ->assertSee('darvis/mailtrap');
 });
 ```
 

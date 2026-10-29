@@ -5,7 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [1.8.0] - 2026-10-29
+
+### Added
+- **A packages page on `<LEMMINGS_ROUTE>/packages`** (route name `lemmings.packages`, default `/lemmings/packages`). It lists the packages in the new `lemmings.packages` config array, by default a few `darvis/*` packages, `laravel/ai`, `laravel/boost` and `sentry/sentry-laravel`, each with its name as a link, its purpose and whether Composer installed it in this application, with the version. The page shows what is installed, so it sits behind the same token as `/clearDgP` and answers 404 without it; wrong tokens count towards the same limit of five a minute.
+- `lemmings.layout` (`LEMMINGS_LAYOUT`): the Blade layout component the packages page renders in, for example `layouts.app`. Without it the page uses the plain layout of the package, `darvis-lemmings::layout`.
+- `LemmingsConfig::layout()`, `LemmingsConfig::packages()` and `LemmingsConfig::packagesRoute()`, and `Darvis\Lemmings\Support\Packages::status()`, which joins the configured list with what Composer installed.
+
+### Changed
+- The token check of `/clearDgP` moved to `Darvis\Lemmings\Support\TokenGuard`, shared with the packages page. The route behaves exactly as before.
+- The Boost guideline and skill no longer refer to older package versions; a host app that reads them always has the current version.
 
 ## [1.7.1] - 2026-09-21
 

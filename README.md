@@ -15,6 +15,7 @@ A hidden Lemmings easter egg page for Laravel applications. The umbrella in the 
 - **Asks search engines to stay away** - the page carries `noindex, nofollow`
 - **Your own page** - override the view in `resources/views/vendor/darvis-lemmings`
 - **Clear the caches without a shell** - `/clearDgP`, closed until you set `LEMMINGS_CLEAR_TOKEN`
+- **See which packages are installed** - `/lemmings/packages` lists your packages with name, link, purpose and version, behind the same token
 - **Laravel Boost** - guideline and skill included, so an AI assistant in your app knows the package
 
 ## Requirements
@@ -60,14 +61,18 @@ curl -i -H "X-Lemmings-Token: paste-the-48-characters-here" https://your-site.ex
 
 From 1.5.0 to 1.6.0 this page was open to every visitor. Use 1.7.0 or later, and read the [security notes](https://arviddejong.github.io/lemmings/security.html).
 
+## Which packages are installed
+
+With the same token, `https://your-site.example/lemmings/packages?token=...` shows the packages from `config/lemmings.php` (by default a few `darvis/*` packages, `laravel/ai`, `laravel/boost` and `sentry/sentry-laravel`): the name as a link, what the package is for, and the installed version or "not installed". Publish the config to change the list. Set `LEMMINGS_LAYOUT=layouts.app` to render the page in the layout component of your own application.
+
 ## Documentation
 
 The full documentation lives on the [documentation site](https://arviddejong.github.io/lemmings/):
 
 - [Installation](https://arviddejong.github.io/lemmings/installation.html): the steps, and how to check that it works
 - [Quick start](https://arviddejong.github.io/lemmings/quick-start.html): your link, a login in front of the page, your own picture
-- [Configuration](https://arviddejong.github.io/lemmings/configuration.html): the path, the link and the clear token
-- [How it works](https://arviddejong.github.io/lemmings/how-it-works.html): the two routes, the token check and the view
+- [Configuration](https://arviddejong.github.io/lemmings/configuration.html): the path, the link, the clear token, the layout and the package list
+- [How it works](https://arviddejong.github.io/lemmings/how-it-works.html): the three routes, the token check and the views
 - [Security and privacy](https://arviddejong.github.io/lemmings/security.html): what is public and what the token protects
 - [Testing](https://arviddejong.github.io/lemmings/testing.html): test the page and the closed maintenance route in your app
 - [Troubleshooting](https://arviddejong.github.io/lemmings/troubleshooting.html): a 404, a right token that is refused, the wrong link

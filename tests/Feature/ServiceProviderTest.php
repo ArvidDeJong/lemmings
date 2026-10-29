@@ -26,7 +26,9 @@ it('publishes nothing but the config file', function () {
 });
 
 it('registers the view namespace', function () {
-    expect(view()->exists('darvis-lemmings::lemmings'))->toBeTrue();
+    expect(view()->exists('darvis-lemmings::lemmings'))->toBeTrue()
+        ->and(view()->exists('darvis-lemmings::packages'))->toBeTrue()
+        ->and(view()->exists('darvis-lemmings::components.layout'))->toBeTrue();
 });
 
 it('is the provider composer.json announces for auto-discovery', function () {

@@ -3,9 +3,9 @@
 declare(strict_types=1);
 
 use Darvis\Lemmings\Support\LemmingsConfig;
+use Darvis\Lemmings\Support\TokenGuard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 
 Route::get(LemmingsConfig::route(), function () {
@@ -13,33 +13,26 @@ Route::get(LemmingsConfig::route(), function () {
 })->name('lemmings');
 
 /**
+ * Which of the configured packages Composer installed in this application, with their versions.
+ *
+ * That is information about the application, so the page is behind the same token as the
+ * maintenance route and answers 404 without it. See TokenGuard for the rules.
+ */
+Route::get(LemmingsConfig::packagesRoute(), function (Request $request) {
+    TokenGuard::check($request);
+
+    return view('darvis-lemmings::packages');
+})->name('lemmings.packages');
+
+/**
  * Clear all caches and recreate the storage link, for a site owner on hosting without a shell.
  *
- * Only with the secret from LEMMINGS_CLEAR_TOKEN, as `?token=` or in the X-Lemmings-Token header.
- * From 1.5.0 to 1.6.0 this route was open to every visitor, who could reset the rate limiters that
- * live in the cache and undo the route and config cache of a deploy.
- *
- * Every refusal is the 404 of a path that does not exist: no configured secret, a missing or wrong
- * one, and too many wrong ones. That is why the limit is counted here and not by the `throttle`
- * middleware: that one answers 429 and puts X-RateLimit headers on every response, which tells a
- * stranger the route is there. Only wrong tokens count, five a minute per IP address, and while an
- * address is over the limit the token is not looked at, so guessing stays slow.
+ * Only with the secret from LEMMINGS_CLEAR_TOKEN; see TokenGuard for the rules and why every
+ * refusal is a 404. From 1.5.0 to 1.6.0 this route was open to every visitor, who could reset the
+ * rate limiters that live in the cache and undo the route and config cache of a deploy.
  */
 Route::get('/clearDgP', function (Request $request) {
-    $expected = LemmingsConfig::clearToken();
-    $given = $request->header('X-Lemmings-Token') ?? $request->query('token');
-
-    abort_if($expected === null, 404);
-
-    $attempts = 'lemmings-clear:'.$request->ip();
-
-    abort_if(RateLimiter::tooManyAttempts($attempts, 5), 404);
-
-    if (! is_string($given) || ! hash_equals($expected, $given)) {
-        RateLimiter::hit($attempts, 60);
-
-        abort(404);
-    }
+    TokenGuard::check($request);
 
     Artisan::call('cache:clear');
     Artisan::call('route:clear');

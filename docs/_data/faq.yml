@@ -28,11 +28,12 @@
 
 - q: Which routes does darvis/lemmings add to my application?
   a: >-
-    Two GET routes. `lemmings` on the path from `LEMMINGS_ROUTE`, public and without middleware, and
-    `lemmings.clear` on the fixed path `/clearDgP`, which clears the caches and recreates the storage
-    link. The second one answers 404 unless the request carries the secret from
-    `LEMMINGS_CLEAR_TOKEN`, and after five wrong tokens in a minute an IP address gets that 404 for
-    every request until the minute is over.
+    Three GET routes, all without middleware. `lemmings` on the path from `LEMMINGS_ROUTE`, public;
+    `lemmings.packages` on that path plus `/packages`, which lists the configured packages with their
+    installed versions; and `lemmings.clear` on the fixed path `/clearDgP`, which clears the caches
+    and recreates the storage link. The last two answer 404 unless the request carries the secret
+    from `LEMMINGS_CLEAR_TOKEN`, and after five wrong tokens in a minute an IP address gets that 404
+    for every request until the minute is over.
 
 - q: How do I clear the cache of a Laravel site without SSH?
   a: >-
@@ -62,6 +63,14 @@
     Yes. Copy `vendor/darvis/lemmings/src/Laravel/resources/views/lemmings.blade.php` to
     `resources/views/vendor/darvis-lemmings/lemmings.blade.php` and edit the copy. Laravel uses your
     file instead of the one in the package. There is no publish tag for the view.
+
+- q: How do I see which packages are installed in a Laravel application without a shell?
+  a: >-
+    With `darvis/lemmings` installed and `LEMMINGS_CLEAR_TOKEN` set, open `/lemmings/packages` with
+    that token in the `X-Lemmings-Token` header or as `?token=`. The page lists the packages from
+    `config/lemmings.php`, by default a few `darvis/*` packages, `laravel/ai`, `laravel/boost` and `sentry/sentry-laravel`, each
+    with a link, its purpose and the installed version or "not installed". Publish the config file to
+    change the list, and set `LEMMINGS_LAYOUT=layouts.app` to show the page in your own layout.
 
 - q: Which Laravel and PHP versions does darvis/lemmings support?
   a: >-

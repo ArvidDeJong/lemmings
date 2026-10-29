@@ -19,6 +19,7 @@ Developers and agencies who build Laravel sites for clients and want a quiet way
 - It shows nothing about the application: no Laravel or PHP version, no environment, no paths, and nothing from the request.
 - It has no switch for middleware or a login. You add those with a route of your own, see [Quick start](quick-start.md).
 - The maintenance page does nothing until you set `LEMMINGS_CLEAR_TOKEN`. Without it the page answers 404.
+- With that token, `/lemmings/packages` shows which of your packages are installed in the application, with their versions. That page too answers 404 without the token.
 
 Versions 1.5.0 to 1.6.0 had the maintenance page open to every visitor. Use 1.7.0 or later, and read [Security and privacy](security.md).
 
@@ -43,8 +44,8 @@ Then open `https://your-site.example/lemmings`.
 
 - [Installation](installation.md): the steps, and how to check that it works
 - [Quick start](quick-start.md): your link, a hidden link to the page, a login in front of it, your own picture
-- [Configuration](configuration.md): the path, the link and the clear token
-- [How it works](how-it-works.md): the two routes, the token check and the view
+- [Configuration](configuration.md): the path, the link, the clear token, the layout and the package list
+- [How it works](how-it-works.md): the three routes, the token check and the views
 - [Security and privacy](security.md): what is public, what the page reveals and what the token protects
 - [Testing](testing.md): test the page and the closed maintenance route in your application
 - [Troubleshooting](troubleshooting.md): a 404, a right token that is refused, the wrong link and other symptoms
