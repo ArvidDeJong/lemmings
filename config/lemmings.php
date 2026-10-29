@@ -60,7 +60,7 @@ return [
         ],
         'laravel-lang/common' => [
             'name' => 'Laravel Lang',
-            'purpose' => 'Translations of the messages Laravel, its validation rules and the starter kits ship, in many languages, kept up to date with one command.',
+            'purpose' => 'Translations of the messages Laravel, its validation rules and the starter kits ship, in many languages, kept up to date with one command. Install it with composer require laravel-lang/common and add Dutch with php artisan lang:add nl.',
             'url' => 'https://packagist.org/packages/laravel-lang/common',
         ],
         'laravel/ai' => [

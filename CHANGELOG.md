@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.10.0] - 2026-10-29
+
+### Changed
+- The `laravel-lang/common` entry on the packages page tells how to install it and add Dutch: `composer require laravel-lang/common` and `php artisan lang:add nl`.
+
 ## [1.9.0] - 2026-10-29
 
 ### Added
