@@ -7,10 +7,11 @@ parameters:
         - src
     ignoreErrors:
         # Larastan only looks for views in resources/views of the analysed app. It cannot resolve a
-        # view under the package namespace the provider registers with loadViewsFrom(). The view
-        # exists: tests/Feature/ServiceProviderTest.php asserts it.
+        # view under the package namespace the provider registers with loadViewsFrom(). The views
+        # exist: tests/Feature/ServiceProviderTest.php asserts them. One for the easter egg page,
+        # one for the packages page.
         -
             identifier: argument.type
             message: '#view-string\|null, string given#'
             path: src/Laravel/routes/web.php
-            count: 1
+            count: 2

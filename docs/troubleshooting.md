@@ -35,7 +35,7 @@ A view calls `route('lemmings')`, but the package route is not there. The causes
 | The config cache is older than your `.env` | `php artisan config:clear`, or `php artisan config:cache` again |
 | You published `config/lemmings.php` and changed `url` there to a fixed value | Put `env('LEMMINGS_URL', ...)` back, or change the value in that file |
 
-## `/clearDgP` gives a 404 although you send the token
+## `/clearDgP` or `/lemmings/packages` gives a 404 although you send the token
 
 Every refusal is the same 404, so check these one by one:
 

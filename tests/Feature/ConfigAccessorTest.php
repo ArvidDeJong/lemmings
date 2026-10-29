@@ -17,8 +17,49 @@ test('the accessors return the values the config file ships', function () {
 
     expect(LemmingsConfig::route())->toBe($config['route'])
         ->and(LemmingsConfig::url())->toBe($config['url'])
+        ->and(LemmingsConfig::packages())->toBe($config['packages'])
         ->and($config['clear_token'])->toBeNull()
-        ->and(LemmingsConfig::clearToken())->toBeNull();
+        ->and(LemmingsConfig::clearToken())->toBeNull()
+        ->and($config['layout'])->toBeNull()
+        ->and(LemmingsConfig::layout())->toBe('darvis-lemmings::layout');
+});
+
+test('the packages page lives under the easter egg path, also with a trailing slash', function () {
+    expect(LemmingsConfig::packagesRoute())->toBe('/lemmings/packages');
+
+    config(['lemmings.route' => '/built-by/']);
+
+    expect(LemmingsConfig::packagesRoute())->toBe('/built-by/packages');
+});
+
+test('the layout falls back to the package layout for a missing, empty or non string value', function (mixed $configured) {
+    config(['lemmings.layout' => $configured]);
+
+    expect(LemmingsConfig::layout())->toBe('darvis-lemmings::layout');
+})->with(['null' => [null], 'empty string' => [''], 'not a string' => [123]]);
+
+test('a configured layout is returned as is', function () {
+    config(['lemmings.layout' => 'layouts.app']);
+
+    expect(LemmingsConfig::layout())->toBe('layouts.app');
+});
+
+test('the packages list leaves out an entry that is not complete', function () {
+    config(['lemmings.packages' => [
+        'vendor/complete' => ['name' => 'Complete', 'purpose' => 'All three strings.', 'url' => 'https://example.test'],
+        'vendor/no-url' => ['name' => 'No url', 'purpose' => 'Misses the url.'],
+        'vendor/not-an-array' => 'just a string',
+        'vendor/wrong-type' => ['name' => 'Wrong', 'purpose' => 'Url is not a string.', 'url' => ['https://example.test']],
+        0 => ['name' => 'No package name', 'purpose' => 'The key is not a string.', 'url' => 'https://example.test'],
+    ]]);
+
+    expect(LemmingsConfig::packages())->toBe([
+        'vendor/complete' => ['name' => 'Complete', 'purpose' => 'All three strings.', 'url' => 'https://example.test'],
+    ]);
+
+    config(['lemmings.packages' => 'not a list']);
+
+    expect(LemmingsConfig::packages())->toBe([]);
 });
 
 test('the clear token is null unless it is a string with something in it', function (mixed $configured, ?string $expected) {

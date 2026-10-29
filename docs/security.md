@@ -1,12 +1,12 @@
 ---
 title: "Security and privacy"
 nav_order: 6
-description: "Is darvis/lemmings safe? A public easter egg page that reveals nothing about the app, and a cache clearing route that answers 404 without your secret token."
+description: "Is darvis/lemmings safe? A public easter egg page that reveals nothing about the app, and a cache clearing route and a packages page that answer 404 without your secret token."
 ---
 
 # Security and privacy
 
-This package adds two routes to every application it is installed in. This page says exactly what they are.
+This package adds three routes to every application it is installed in. This page says exactly what they are.
 
 ## What is reachable
 
@@ -15,6 +15,8 @@ This package adds two routes to every application it is installed in. This page 
 | `LEMMINGS_ROUTE`, default `/lemmings` | everybody | A static page is shown |
 | `/clearDgP` | whoever has the secret from `LEMMINGS_CLEAR_TOKEN` | The caches are cleared and the storage link is recreated |
 | `/clearDgP` | everybody else, and everybody while no token is set | 404 |
+| `LEMMINGS_ROUTE` plus `/packages`, default `/lemmings/packages` | whoever has the secret from `LEMMINGS_CLEAR_TOKEN` | The configured packages are listed, with the installed versions |
+| that path | everybody else, and everybody while no token is set | 404 |
 
 ## What the easter egg page reveals
 
@@ -25,13 +27,17 @@ This package adds two routes to every application it is installed in. This page 
 
 The test suite checks each of these points.
 
+## What the packages page reveals
+
+The packages page shows which of the configured packages Composer installed in the application, with their versions. That is information about the application, which is why the page is behind the same token as the maintenance route and gets the same 404 without it. Whoever has the token sees the list; nobody else does. The page writes nothing from the request into the HTML, and the package's own layout carries `noindex, nofollow`.
+
 ## The maintenance route
 
 `GET /clearDgP` runs `cache:clear`, `route:clear`, `config:clear`, `view:clear`, `storage:link`, `event:clear` and `optimize:clear`. It is there for hosting without shell access.
 
 - **Closed by default.** Without `LEMMINGS_CLEAR_TOKEN`, or with an empty one, the route answers 404 for every request. An empty `?token=` never matches.
 - **One answer for every refusal.** No configured token, a missing token, a wrong token and too many wrong tokens all give the same 404. It is the 404 your application gives for a path that does not exist: the same status, no rate limit headers, never a 429. So a GET request does not tell a visitor that the route is there, whether a token is set or how close a guess was. The token is compared with `hash_equals`, so the time a refusal takes says nothing about how close a guess was either.
-- **Five wrong tokens a minute.** Wrong and missing tokens are counted for each IP address. After five within a minute, every request from that address gets the 404, also one with the right token, until that minute is over. A request with the right token is never counted.
+- **Five wrong tokens a minute.** Wrong and missing tokens are counted for each IP address, on the maintenance route and the packages page together. After five within a minute, every request from that address to either route gets the 404, also one with the right token, until that minute is over. A request with the right token is never counted.
 - **What still shows the route.** The path is the same on every site and is in the public source code of the package. A refusal does a little more work than an unknown path, so the response time can differ. And other methods answer differently: `POST /clearDgP` gets a 405 with `Allow: GET, HEAD`, where a path that does not exist gets a 404. Treat the path as known. The token is what protects the route.
 - **Header first.** The token is read from the `X-Lemmings-Token` header, and only when there is no such header from `?token=`.
 
@@ -48,7 +54,8 @@ curl -H "X-Lemmings-Token: your-token" https://your-site.example/clearDgP
 Whoever has the token can, as often as they like:
 
 - empty the default cache store. Whatever your application keeps there is gone, which can include rate limiter counters such as the login throttle, and locks;
-- remove the cached routes and config you built during a deploy. Laravel then reads the route and config files on every request until you cache them again.
+- remove the cached routes and config you built during a deploy. Laravel then reads the route and config files on every request until you cache them again;
+- see which of the configured packages are installed, with their versions.
 
 The token gives no access to data and runs nothing but those seven commands.
 
