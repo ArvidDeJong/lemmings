@@ -17,11 +17,11 @@
 
         .lemmings-packages li {
             padding: 1rem 0;
-            border-top: 1px solid #444;
+            border-top: 1px solid #e5e7eb;
         }
 
         .lemmings-packages li:last-child {
-            border-bottom: 1px solid #444;
+            border-bottom: 1px solid #e5e7eb;
         }
 
         .lemmings-packages a {
@@ -40,11 +40,13 @@
             padding: .1rem .6rem;
             border-radius: 1rem;
             font-size: .8125em;
-            background: #7f1d1d;
+            background: #fee2e2;
+            color: #991b1b;
         }
 
         .lemmings-packages .is-installed .status {
-            background: #14532d;
+            background: #dcfce7;
+            color: #166534;
         }
 
         .lemmings-packages p {

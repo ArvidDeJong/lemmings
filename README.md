@@ -27,13 +27,10 @@ A hidden Lemmings easter egg page for Laravel applications. The umbrella in the 
 
 ```bash
 composer require darvis/lemmings
+php artisan lemmings:install --url=https://your-own-site.example
 ```
 
-`.env`:
-
-```env
-LEMMINGS_URL=https://your-own-site.example
-```
+The command writes `LEMMINGS_URL` and a fresh `LEMMINGS_CLEAR_TOKEN` to `.env` and shows the token once. Run it on every server, because `.env` is not in git.
 
 ## Quick start
 
@@ -46,6 +43,8 @@ Open `https://your-site.example/lemmings` and click the umbrella: your site open
 ## Clearing the caches without a shell
 
 Know this before you install: the package registers `GET /clearDgP`, which runs `cache:clear`, `route:clear`, `config:clear`, `view:clear`, `storage:link`, `event:clear` and `optimize:clear`. It answers 404 until you set a secret, and after that only a request that carries the secret gets through. Every refusal is the same 404 as a path that does not exist, and after five wrong tokens in a minute an IP address gets that 404 for every request until the minute is over.
+
+`php artisan lemmings:install` makes the token for you. By hand:
 
 ```bash
 php -r "echo bin2hex(random_bytes(24));"    # make a token
@@ -63,7 +62,7 @@ From 1.5.0 to 1.6.0 this page was open to every visitor. Use 1.7.0 or later, and
 
 ## Which packages are installed
 
-With the same token, `https://your-site.example/lemmings/packages?token=...` shows the packages from `config/lemmings.php` (by default a few `darvis/*` packages, `laravel/ai`, `laravel/boost` and `sentry/sentry-laravel`): the name as a link, what the package is for, and the installed version or "not installed". Publish the config to change the list. Set `LEMMINGS_LAYOUT=layouts.app` to render the page in the layout component of your own application.
+With the same token, `https://your-site.example/lemmings/packages?token=...` shows the packages from `config/lemmings.php` (by default a few `darvis/*` packages, `laravel-lang/common`, `laravel/ai`, `laravel/boost` and `sentry/sentry-laravel`): the name as a link, what the package is for, and the installed version or "not installed". Publish the config to change the list. Set `LEMMINGS_LAYOUT=layouts.app` to render the page in the layout component of your own application.
 
 ## Documentation
 

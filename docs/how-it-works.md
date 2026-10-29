@@ -6,7 +6,11 @@ description: "What darvis/lemmings registers in a Laravel application: three GET
 
 # How it works
 
-The service provider does three things: it merges `config/lemmings.php`, it loads one routes file and it registers the view namespace `darvis-lemmings`.
+The service provider does four things: it merges `config/lemmings.php`, it loads one routes file, it registers the view namespace `darvis-lemmings` and, in the console, it registers the `lemmings:install` command.
+
+## The install command
+
+`php artisan lemmings:install` generates a token with `bin2hex(random_bytes(24))` and writes it as `LEMMINGS_CLEAR_TOKEN` to the `.env` of the application, in place when the key is there, at the end when it is not. A token that is already set is left alone unless `--force` is given. `--url=` writes `LEMMINGS_URL` the same way. The token is printed once and never logged. Without an `.env` file the command fails and writes nothing.
 
 ## The routes
 

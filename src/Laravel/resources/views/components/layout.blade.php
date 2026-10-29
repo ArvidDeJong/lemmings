@@ -12,8 +12,8 @@
         body {
             margin: 0;
             padding: 2rem 1rem;
-            background: #000;
-            color: #fff;
+            background: #fff;
+            color: #1f2937;
             font: 16px/1.5 system-ui, sans-serif;
         }
     </style>

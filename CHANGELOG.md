@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+## [1.9.0] - 2026-10-29
+
+### Added
+- `php artisan lemmings:install`: generates the `LEMMINGS_CLEAR_TOKEN` and writes it to `.env`, so `/clearDgP` and the packages page work right after installing. A token that is already there is kept unless you pass `--force`; `--url=` also writes `LEMMINGS_URL`.
+- `laravel-lang/common` is in the default package list of the packages page.
+
+### Changed
+- The package's own layout for the packages page, `darvis-lemmings::layout`, has a light background instead of a black one. The easter egg page is unchanged.
+
 ## [1.8.1] - 2026-10-29
 
 ### Added

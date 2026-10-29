@@ -1,6 +1,7 @@
 <?php
 
 use Darvis\Lemmings\Laravel\Providers\DarvisLemmingsProvider;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\ServiceProvider;
 
 it('merges the package config', function () {
@@ -23,6 +24,10 @@ it('publishes nothing but the config file', function () {
     // There is no publish tag for the view. A host app overrides it in
     // resources/views/vendor/darvis-lemmings instead.
     expect(ServiceProvider::pathsToPublish(DarvisLemmingsProvider::class))->toHaveCount(1);
+});
+
+it('registers the install command', function () {
+    expect(array_key_exists('lemmings:install', Artisan::all()))->toBeTrue();
 });
 
 it('registers the view namespace', function () {

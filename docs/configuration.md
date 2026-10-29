@@ -12,7 +12,7 @@ The package has five settings. You can leave all of them out.
 | --- | --- | --- | --- |
 | `lemmings.clear_token` | `LEMMINGS_CLEAR_TOKEN` | none | The secret that opens `/clearDgP` and the packages page. Without it both answer 404 |
 | `lemmings.layout` | `LEMMINGS_LAYOUT` | none | The layout component the packages page renders in. Without it the package uses its own plain layout |
-| `lemmings.packages` | | a few `darvis/*` packages, `laravel/ai`, `laravel/boost` and `sentry/sentry-laravel` | The packages the packages page lists |
+| `lemmings.packages` | | a few `darvis/*` packages, `laravel-lang/common`, `laravel/ai`, `laravel/boost` and `sentry/sentry-laravel` | The packages the packages page lists |
 | `lemmings.route` | `LEMMINGS_ROUTE` | `/lemmings` | The path of the easter egg page; the packages page is on that path plus `/packages` |
 | `lemmings.url` | `LEMMINGS_URL` | `https://lemmings.darvis.nl` | The address the umbrella in the picture links to |
 
@@ -57,6 +57,12 @@ The address is escaped when it is written into the page. An empty value counts a
 ## The clear token
 
 `GET /clearDgP` clears the caches and recreates the storage link, for hosting without shell access. It only works for a request that carries this secret; every other request gets a 404. The same secret opens the [packages page](#the-packages).
+
+```bash
+php artisan lemmings:install
+```
+
+The command writes a fresh token of 48 hex characters to `.env` and shows it once. It keeps a token that is already there unless you pass `--force`, and `--url=https://your-own-site.example` also writes `LEMMINGS_URL`. By hand:
 
 ```bash
 php -r "echo bin2hex(random_bytes(24));"
@@ -104,7 +110,7 @@ LEMMINGS_LAYOUT=layouts.app
 
 The packages page renders inside a Blade layout component. The value is the component name: `layouts.app` is `resources/views/components/layouts/app.blade.php`, the layout of the Livewire starter kit. The page is plain HTML with its own small stylesheet, so it looks the same in your layout and in the one of the package.
 
-- Without a value the package uses its own layout, `darvis-lemmings::layout`: a black page with the list and a `robots` meta tag with `noindex, nofollow`.
+- Without a value the package uses its own layout, `darvis-lemmings::layout`: a plain page with a light background, the list and a `robots` meta tag with `noindex, nofollow`.
 - The package route has no middleware. A layout that needs the session, for example one with a Livewire component or `@auth`, only works when you register the route yourself with the `web` middleware; see [Quick start](quick-start.md#put-a-login-in-front-of-the-page) for the pattern.
 - A component that does not exist gives Laravel's "Unable to locate a class or view for component" error, not a fallback.
 
